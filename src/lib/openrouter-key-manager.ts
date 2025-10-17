@@ -25,21 +25,35 @@ const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
  * Get all available API keys from environment
  */
 function getAllKeys(): Array<{ name: string; key: string }> {
-  const keys: Array<{ name: string; key: string }> = [];
+  const defaultKey = process.env.OPENROUTER_API;
+  const keyOne = process.env.OPENROUTER_API_1;
+  const keyTwo = process.env.OPENROUTER_API_2;
 
-  const primaryKey = process.env.OPENROUTER_API;
-  const fallbackKey = process.env.OPENROUTER_API_1;
+  // Daily rotation: 3-day cycle based on day of year
+  const dayOfYear = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+  const rotationDay = dayOfYear % 3; // 0, 1, or 2
 
-  // Use OPENROUTER_API_1 as primary for now
-  if (fallbackKey) {
-    keys.push({ name: 'primary', key: fallbackKey });
+  // Create array of available keys
+  const availableKeys: Array<{ name: string; key: string }> = [];
+  if (defaultKey) availableKeys.push({ name: 'openrouter-default', key: defaultKey });
+  if (keyOne) availableKeys.push({ name: 'openrouter-one', key: keyOne });
+  if (keyTwo) availableKeys.push({ name: 'openrouter-two', key: keyTwo });
+
+  // Rotate based on day
+  if (availableKeys.length === 0) {
+    console.error('[KeyManager] No API keys configured');
+    return [];
   }
 
-  if (primaryKey) {
-    keys.push({ name: 'fallback', key: primaryKey });
+  // Rotate the array to start from different key each day
+  for (let i = 0; i < rotationDay && availableKeys.length > 0; i++) {
+    const first = availableKeys.shift();
+    if (first) availableKeys.push(first);
   }
 
-  return keys;
+  console.log(`[KeyManager] Daily rotation: Day ${rotationDay} of 3-day cycle, primary: ${availableKeys[0]?.name}`);
+
+  return availableKeys;
 }
 
 /**
@@ -112,12 +126,12 @@ export async function getBestAvailableKey(): Promise<{
 
     // Use cached status if valid
     if (cached && isCacheValid(cached.lastChecked) && cached.isAvailable) {
-      console.log(`[KeyManager] Using cached ${name} key`);
+      console.log(`[KeyManager] Using cached ${name} (healthy)`);
       return { key, name };
     }
 
     // Check key status if cache is stale or unavailable
-    console.log(`[KeyManager] Checking ${name} key status...`);
+    console.log(`[KeyManager] Checking ${name} status...`);
     const status = await checkKeyCredits(key);
 
     // Update cache
@@ -133,7 +147,7 @@ export async function getBestAvailableKey(): Promise<{
 
     // Return first available key
     if (status.isAvailable && status.rateLimitRemaining > 0) {
-      console.log(`[KeyManager] Using ${name} key (${status.rateLimitRemaining} rate limit remaining)`);
+      console.log(`[KeyManager] ✓ Selected ${name} (${status.rateLimitRemaining} requests remaining)`);
       return { key, name };
     }
   }
