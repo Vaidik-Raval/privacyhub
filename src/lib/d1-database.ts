@@ -43,8 +43,6 @@ export interface StoredAnalysis {
   overall_score: number;
   privacy_grade: string;
   risk_level: string;
-  gdpr_compliance: string;
-  ccpa_compliance: string;
   dpdp_act_compliance: string | null;
   analysis_data: string; // JSON string
   homepage_screenshot: string | null;
@@ -60,8 +58,6 @@ export interface AnalysisData {
   privacy_grade: string;
   risk_level: string;
   regulatory_compliance: {
-    gdpr_compliance: string;
-    ccpa_compliance: string;
     dpdp_act_compliance?: string;
     major_violations?: string[];
   };
@@ -70,6 +66,93 @@ export interface AnalysisData {
   positive_practices?: string[];
   actionable_recommendations?: Record<string, unknown>;
   executive_summary?: string;
+}
+
+/**
+ * Initialize D1 database schema
+ * Creates all necessary tables if they don't exist
+ * Safe to call on every deployment/startup
+ */
+export async function initializeDatabase(db: D1Database): Promise<void> {
+  try {
+    console.log('[D1 Init] Initializing database schema...');
+
+    // Execute schema creation (idempotent - safe to run multiple times)
+    await db.exec(`
+      -- Analyses table - stores privacy policy analysis results
+      CREATE TABLE IF NOT EXISTS analyses (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          url TEXT NOT NULL,
+          domain TEXT NOT NULL,
+          hostname TEXT NOT NULL,
+          content_hash TEXT NOT NULL,
+          overall_score REAL NOT NULL,
+          privacy_grade TEXT NOT NULL,
+          risk_level TEXT NOT NULL,
+          dpdp_act_compliance TEXT,
+          analysis_data TEXT NOT NULL,
+          homepage_screenshot TEXT,
+          scraper_used TEXT,
+          content_length INTEGER,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          last_checked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(domain, content_hash)
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_analyses_domain ON analyses(domain);
+      CREATE INDEX IF NOT EXISTS idx_analyses_created_at ON analyses(created_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_analyses_last_checked ON analyses(last_checked_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_analyses_content_hash ON analyses(content_hash);
+      CREATE INDEX IF NOT EXISTS idx_analyses_domain_checked ON analyses(domain, last_checked_at DESC);
+
+      CREATE TABLE IF NOT EXISTS analysis_stats (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          total_analyses INTEGER DEFAULT 0,
+          unique_domains INTEGER DEFAULT 0,
+          avg_score REAL DEFAULT 0,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS grade_distribution (
+          grade TEXT PRIMARY KEY,
+          count INTEGER DEFAULT 0
+      );
+
+      CREATE TABLE IF NOT EXISTS risk_distribution (
+          risk_level TEXT PRIMARY KEY,
+          count INTEGER DEFAULT 0
+      );
+    `);
+
+    // Initialize stats table with default row (if not exists)
+    await db.prepare(`
+      INSERT INTO analysis_stats (id, total_analyses, unique_domains, avg_score)
+      SELECT 1, 0, 0, 0.0
+      WHERE NOT EXISTS (SELECT 1 FROM analysis_stats WHERE id = 1)
+    `).run();
+
+    // Initialize grade distribution (if not exists)
+    const grades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
+    for (const grade of grades) {
+      await db.prepare(`
+        INSERT OR IGNORE INTO grade_distribution (grade, count) VALUES (?, 0)
+      `).bind(grade).run();
+    }
+
+    // Initialize risk distribution (if not exists)
+    const riskLevels = ['EXEMPLARY', 'LOW', 'MODERATE', 'MODERATE-HIGH', 'HIGH'];
+    for (const riskLevel of riskLevels) {
+      await db.prepare(`
+        INSERT OR IGNORE INTO risk_distribution (risk_level, count) VALUES (?, 0)
+      `).bind(riskLevel).run();
+    }
+
+    console.log('[D1 Init] ✓ Database schema initialized successfully');
+  } catch (error) {
+    console.error('[D1 Init] ✗ Failed to initialize database:', error);
+    // Don't throw - allow app to continue even if init fails
+  }
 }
 
 /**
@@ -164,10 +247,10 @@ export async function saveAnalysis(
       INSERT INTO analyses (
         url, domain, hostname, content_hash,
         overall_score, privacy_grade, risk_level,
-        gdpr_compliance, ccpa_compliance, dpdp_act_compliance,
+        dpdp_act_compliance,
         analysis_data, homepage_screenshot, scraper_used, content_length,
         created_at, updated_at, last_checked_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'), datetime('now'))
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'), datetime('now'))
       ON CONFLICT(domain, content_hash) DO UPDATE SET
         last_checked_at = datetime('now'),
         updated_at = datetime('now')
@@ -180,8 +263,6 @@ export async function saveAnalysis(
       analysisData.overall_score,
       analysisData.privacy_grade,
       analysisData.risk_level,
-      analysisData.regulatory_compliance.gdpr_compliance,
-      analysisData.regulatory_compliance.ccpa_compliance,
       analysisData.regulatory_compliance.dpdp_act_compliance || null,
       JSON.stringify(analysisData),
       metadata.homepageScreenshot || null,

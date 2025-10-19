@@ -12,9 +12,7 @@ CREATE TABLE IF NOT EXISTS analyses (
     privacy_grade TEXT NOT NULL,
     risk_level TEXT NOT NULL,
 
-    -- Compliance scores
-    gdpr_compliance TEXT NOT NULL,
-    ccpa_compliance TEXT NOT NULL,
+    -- Compliance scores (DPDP Act 2023 - India)
     dpdp_act_compliance TEXT,
 
     -- Full analysis data as JSON

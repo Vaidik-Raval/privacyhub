@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAnalysisByDomain } from '@/lib/d1-database';
+import { initializeDatabase, getAnalysisByDomain } from '@/lib/d1-database';
 import type { CloudflareRequest } from '@/types/cloudflare';
 
 export async function GET(
@@ -17,6 +17,11 @@ export async function GET(
         { status: 503 }
       );
     }
+
+    // Initialize D1 database schema on first access (idempotent, non-blocking)
+    initializeDatabase(db).catch(err => {
+      console.warn('[D1 Init] Database initialization failed (non-critical):', err);
+    });
 
     const domain = decodeURIComponent(params.domain);
     const analysis = await getAnalysisByDomain(db, domain);

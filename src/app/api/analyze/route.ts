@@ -5,6 +5,7 @@ import { PlaywrightCrawler } from '@crawlee/playwright';
 import { validateUrl } from '@/lib/input-validation';
 import { getBestAvailableKey, markKeyAsFailed } from '@/lib/openrouter-key-manager';
 import {
+  initializeDatabase,
   getCachedAnalysis,
   saveAnalysis,
   generateContentHash,
@@ -418,6 +419,13 @@ export async function POST(request: NextRequest) {
     if (!OPENROUTER_API) {
       console.error('OPENROUTER_API not configured');
       return NextResponse.json({ error: 'API configuration error. OPENROUTER_API not found.' }, { status: 500 });
+    }
+
+    // Initialize D1 database schema on first access (idempotent, non-blocking)
+    if (db) {
+      initializeDatabase(db).catch(err => {
+        console.warn('[D1 Init] Database initialization failed (non-critical):', err);
+      });
     }
 
     console.log('Scraping URL:', sanitizedUrl);
