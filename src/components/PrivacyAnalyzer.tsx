@@ -397,7 +397,7 @@ export default function PrivacyAnalyzer() {
             <CardContent className="p-4 sm:p-6">
               {/* Header */}
               <div className="mb-6">
-                <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <h3 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">Privacy Analysis Results</h3>
                     <div className="flex items-center gap-2 text-xs sm:text-sm">
@@ -414,29 +414,21 @@ export default function PrivacyAnalyzer() {
                     </div>
                   </div>
 
-                  {/* Right side: Screenshot + Home button */}
-                  <div className="flex items-start gap-2 sm:gap-3 flex-shrink-0">
-                    <WebsiteScreenshot
-                      screenshotUrl={result.homepage_screenshot || ''}
-                      homepageUrl={result.homepage_url || `https://${new URL(result.url).hostname}`}
-                      domain={new URL(result.url).hostname}
-                      compact={true}
-                    />
-                    <Button
-                      onClick={() => window.location.href = '/'}
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-1.5 text-sm hover:bg-blue-50 border-blue-200"
-                    >
-                      <Home className="h-3.5 w-3.5" />
-                      <span className="hidden lg:inline">Home</span>
-                    </Button>
-                  </div>
+                  {/* Home button */}
+                  <Button
+                    onClick={() => window.location.href = '/'}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-1.5 text-sm hover:bg-blue-50 border-blue-200 flex-shrink-0"
+                  >
+                    <Home className="h-3.5 w-3.5" />
+                    <span className="hidden lg:inline">Home</span>
+                  </Button>
                 </div>
               </div>
 
               {/* Main Score Visualization */}
-              <div className="grid md:grid-cols-3 gap-6 mb-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-4">
                 {/* Circular Progress */}
                 <div className="flex flex-col items-center justify-center py-2">
                   <div className="relative w-[140px] h-[140px]">
@@ -511,6 +503,16 @@ export default function PrivacyAnalyzer() {
                       {result.analysis.risk_level.replace('-', ' ')} RISK
                     </Badge>
                   </div>
+                </div>
+
+                {/* Website Screenshot Thumbnail */}
+                <div className="flex flex-col items-center justify-center py-2 col-span-2 lg:col-span-1">
+                  <WebsiteScreenshot
+                    screenshotUrl={result.homepage_screenshot || ''}
+                    homepageUrl={result.homepage_url || `https://${new URL(result.url).hostname}`}
+                    domain={new URL(result.url).hostname}
+                    compact={true}
+                  />
                 </div>
               </div>
               
