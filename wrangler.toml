@@ -4,7 +4,7 @@ pages_build_output_dir = ".vercel/output/static"
 
 # D1 Database binding
 [[d1_databases]]
-binding = "DB"
+binding = "an-db"
 database_name = "privacyhub"
 database_id = "b64e7663-7a31-4e38-a210-4c570dabd118"
 

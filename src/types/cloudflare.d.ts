@@ -54,7 +54,7 @@ export interface KVListResult {
  * Cloudflare environment bindings
  */
 export interface CloudflareEnv {
-  DB: D1Database;
+  "an-db": D1Database;
   CACHE?: KVNamespace;
   OPENROUTER_API: string;
   FIRECRAWL_API_KEY?: string;
@@ -108,7 +108,7 @@ export interface IncomingRequestCfProperties {
  */
 export function getDB(request: Request): D1Database | null {
   const cfRequest = request as CloudflareRequest;
-  return cfRequest.env?.DB || null;
+  return cfRequest.env?.["an-db"] || null;
 }
 
 /**

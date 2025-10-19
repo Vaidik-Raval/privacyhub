@@ -42,11 +42,11 @@ async function getOpenAIClient() {
 }
 
 // Initialize Firecrawl client
-function getFirecrawlClient() {
-  if (!process.env.FIRECRAWL_API_KEY) {
-    throw new Error('FIRECRAWL_API_KEY environment variable is required');
+function getFirecrawlClient(apiKey: string) {
+  if (!apiKey) {
+    throw new Error('FIRECRAWL_API_KEY is required');
   }
-  return new FirecrawlApp({ apiKey: process.env.FIRECRAWL_API_KEY });
+  return new FirecrawlApp({ apiKey });
 }
 
 // Simple fetch fallback when Playwright is not available
@@ -408,15 +408,17 @@ export async function POST(request: NextRequest) {
 
     const sanitizedUrl = urlValidation.sanitized!;
 
+    // Get Cloudflare Workers environment bindings (with fallback to process.env for local development)
+    const cfRequest = request as CloudflareRequest;
+    const db: D1Database | undefined = cfRequest.env?.["an-db"];
+    const OPENROUTER_API = cfRequest.env?.OPENROUTER_API || process.env.OPENROUTER_API;
+    const FIRECRAWL_API_KEY = cfRequest.env?.FIRECRAWL_API_KEY || process.env.FIRECRAWL_API_KEY;
+
     // Check required environment variables
-    if (!process.env.OPENROUTER_API) {
+    if (!OPENROUTER_API) {
       console.error('OPENROUTER_API not configured');
       return NextResponse.json({ error: 'API configuration error. OPENROUTER_API not found.' }, { status: 500 });
     }
-
-    // Get D1 database binding from Cloudflare Workers environment
-    const cfRequest = request as CloudflareRequest;
-    const db: D1Database | undefined = cfRequest.env?.DB;
 
     console.log('Scraping URL:', sanitizedUrl);
 
@@ -430,10 +432,10 @@ export async function POST(request: NextRequest) {
     console.log('Homepage URL for screenshot:', homepageUrl);
 
     // Try Firecrawl first (if API key is available)
-    if (process.env.FIRECRAWL_API_KEY) {
+    if (FIRECRAWL_API_KEY) {
       console.log('Attempting to scrape with Firecrawl...');
       try {
-        const firecrawl = getFirecrawlClient();
+        const firecrawl = getFirecrawlClient(FIRECRAWL_API_KEY);
 
         // Try different API call formats for compatibility with enhanced anti-blocking
         let scrapeResult: unknown;
@@ -594,11 +596,52 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
+    // Check D1 cache for existing analysis with content change detection
+    const domain = extractDomain(sanitizedUrl);
+    const contentHash = generateContentHash(content);
+
+    if (db) {
+      console.log('[D1 Cache] Checking for cached analysis...');
+      console.log('[D1 Cache] Domain:', domain, 'Content Hash:', contentHash.substring(0, 16) + '...');
+
+      const cachedAnalysis = await getCachedAnalysis(db, domain, contentHash);
+
+      if (cachedAnalysis) {
+        const cacheAgeDays = Math.floor(
+          (Date.now() - new Date(cachedAnalysis.last_checked_at).getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        console.log(`[D1 Cache] ✓ Found cached analysis (${cacheAgeDays} days old)`);
+        console.log('[D1 Cache] Content unchanged - returning cached result (saves OpenRouter API call)');
+
+        const parsedAnalysis = JSON.parse(cachedAnalysis.analysis_data);
+
+        return NextResponse.json({
+          url: sanitizedUrl,
+          domain,
+          cached: true,
+          cache_age_days: cacheAgeDays,
+          timestamp: cachedAnalysis.last_checked_at,
+          homepage_url: homepageUrl,
+          homepage_screenshot: cachedAnalysis.homepage_screenshot,
+          content_length: cachedAnalysis.content_length,
+          scraper_used: cachedAnalysis.scraper_used,
+          analysis: parsedAnalysis,
+          message: 'Policy content unchanged since last scan - using cached analysis'
+        });
+      }
+
+      console.log('[D1 Cache] ✗ No cached analysis found or content has changed');
+      console.log('[D1 Cache] Proceeding with new AI analysis...');
+    } else {
+      console.log('[D1] Database not available - proceeding without caching');
+    }
+
     // Capture homepage screenshot using Firecrawl (non-blocking, best effort)
-    if (process.env.FIRECRAWL_API_KEY) {
+    if (FIRECRAWL_API_KEY) {
       try {
         console.log('Attempting to capture homepage screenshot with Firecrawl...');
-        const firecrawl = getFirecrawlClient();
+        const firecrawl = getFirecrawlClient(FIRECRAWL_API_KEY);
 
         const screenshotResult = await (firecrawl as unknown as {
           scrape: (params: {
@@ -780,48 +823,26 @@ export async function POST(request: NextRequest) {
       throw new Error('Failed to parse analysis results');
     }
 
-    // Database saving disabled for MVP - no storage, just analyze and return
-    // try {
-    //   const analysisId = saveSQLiteAnalysis(sanitizedUrl, analysis);
-    //   console.log('Analysis saved to SQLite database with ID:', analysisId);
-    // } catch (dbError) {
-    //   console.error('Failed to save analysis to SQLite database:', dbError);
-    //   // Don't fail the request if database save fails
-    // }
-    //
-    // // Save analysis to Firestore
-    // try {
-    //   const urlObj = new URL(sanitizedUrl);
-    //   const hostname = urlObj.hostname.replace(/^www\./, '');
-    //   const logoUrl = getOptimizedLogo(hostname, 128);
-    //
-    //   await saveFirestoreAnalysis(domain, {
-    //     url: sanitizedUrl,
-    //     hostname,
-    //     logo_url: logoUrl,
-    //     overall_score: analysis.overall_score,
-    //     privacy_grade: analysis.privacy_grade,
-    //     risk_level: analysis.risk_level,
-    //     gdpr_compliance: analysis.regulatory_compliance?.gdpr_compliance || 'UNKNOWN',
-    //     ccpa_compliance: analysis.regulatory_compliance?.ccpa_compliance || 'UNKNOWN',
-    //     dpdp_act_compliance: analysis.regulatory_compliance?.dpdp_act_compliance,
-    //     analysis_data: {
-    //       overall_score: analysis.overall_score,
-    //       privacy_grade: analysis.privacy_grade,
-    //       risk_level: analysis.risk_level,
-    //       regulatory_compliance: analysis.regulatory_compliance,
-    //       categories: analysis.categories,
-    //       recommendations: analysis.actionable_recommendations?.immediate_actions || [],
-    //       key_findings: analysis.critical_findings?.high_risk_practices || [],
-    //       summary: analysis.executive_summary
-    //     },
-    //     content_hash: contentHash
-    //   });
-    //   console.log('Analysis saved to Firestore for domain:', domain);
-    // } catch (firestoreError) {
-    //   console.error('Failed to save to Firestore:', firestoreError);
-    //   // Don't fail the request if Firestore save fails
-    // }
+    // Save analysis to D1 database if available
+    if (db) {
+      try {
+        console.log('[D1] Saving analysis to database...');
+        const analysisId = await saveAnalysis(
+          db,
+          sanitizedUrl,
+          content,
+          analysis as AnalysisData,
+          {
+            scraperUsed,
+            homepageScreenshot
+          }
+        );
+        console.log(`[D1] ✓ Analysis saved with ID: ${analysisId}`);
+      } catch (dbError) {
+        console.error('[D1] ✗ Failed to save analysis:', dbError);
+        // Non-blocking - continue even if save fails
+      }
+    }
 
     // Add metadata
     const result = {
