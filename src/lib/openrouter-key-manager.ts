@@ -126,13 +126,19 @@ export async function getBestAvailableKey(env?: Record<string, string | undefine
   for (const { name, key } of allKeys) {
     const cached = keyStatusCache[name];
 
-    // Use cached status if valid
+    // Skip if explicitly marked as failed recently
+    if (cached && isCacheValid(cached.lastChecked) && !cached.isAvailable) {
+      console.log(`[KeyManager] Skipping ${name} (marked as failed: ${cached.error})`);
+      continue;
+    }
+
+    // Use cached status if valid and healthy
     if (cached && isCacheValid(cached.lastChecked) && cached.isAvailable) {
       console.log(`[KeyManager] Using cached ${name} (healthy)`);
       return { key, name };
     }
 
-    // Check key status if cache is stale or unavailable
+    // Check key status if cache is stale or unavailable (non-blocking)
     console.log(`[KeyManager] Checking ${name} status...`);
     const status = await checkKeyCredits(key);
 
@@ -147,9 +153,17 @@ export async function getBestAvailableKey(env?: Record<string, string | undefine
       error: status.error,
     };
 
-    // Return first available key
+    // Return key even if credit check failed (optimistic approach)
+    // Only skip if explicitly rate limited
     if (status.isAvailable && status.rateLimitRemaining > 0) {
       console.log(`[KeyManager] ✓ Selected ${name} (${status.rateLimitRemaining} requests remaining)`);
+      return { key, name };
+    } else if (!status.isAvailable) {
+      console.warn(`[KeyManager] ${name} credit check failed (${status.error}), but will try next key`);
+      continue;
+    } else {
+      // Credit check failed but try anyway
+      console.warn(`[KeyManager] ${name} status unclear, using it anyway (optimistic)`);
       return { key, name };
     }
   }
