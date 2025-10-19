@@ -211,7 +211,8 @@ async function scrapeWithCrawlee(url: string): Promise<string> {
 
           log.info(`Content extracted successfully, length: ${extractedContent.length}`);
         } catch (evalError) {
-          log.error('Failed to extract content from page:', evalError);
+          const errorMsg = evalError instanceof Error ? evalError.message : String(evalError);
+          log.error('Failed to extract content from page:', errorMsg);
           throw evalError;
         }
       },
