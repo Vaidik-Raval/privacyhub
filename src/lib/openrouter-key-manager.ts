@@ -21,6 +21,9 @@ interface KeyUsageCache {
 const keyStatusCache: KeyUsageCache = {};
 const CACHE_DURATION = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
 
+// Round-robin counter for per-request rotation (better load distribution)
+let requestCounter = 0;
+
 /**
  * Get all available API keys from environment
  * Supports both process.env (local) and Cloudflare Workers env binding
@@ -30,30 +33,30 @@ function getAllKeys(env?: Record<string, string | undefined>): Array<{ name: str
   const keyOne = env?.OPENROUTER_API_1 || process.env.OPENROUTER_API_1;
   const keyTwo = env?.OPENROUTER_API_2 || process.env.OPENROUTER_API_2;
 
-  // Daily rotation: 3-day cycle based on day of year
-  const dayOfYear = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
-  const rotationDay = dayOfYear % 3; // 0, 1, or 2
-
   // Create array of available keys
   const availableKeys: Array<{ name: string; key: string }> = [];
   if (defaultKey) availableKeys.push({ name: 'openrouter-default', key: defaultKey });
   if (keyOne) availableKeys.push({ name: 'openrouter-one', key: keyOne });
   if (keyTwo) availableKeys.push({ name: 'openrouter-two', key: keyTwo });
 
-  // Rotate based on day
   if (availableKeys.length === 0) {
     console.error('[KeyManager] No API keys configured');
     return [];
   }
 
-  // Rotate the array to start from different key each day
-  for (let i = 0; i < rotationDay && availableKeys.length > 0; i++) {
+  // Round-robin rotation: rotate on each request for better load distribution
+  // This distributes requests evenly across all keys (e.g., 50 req/day × 3 keys = 150 total)
+  requestCounter++;
+  const rotationIndex = requestCounter % availableKeys.length;
+
+  // Rotate the array to start from different key each request
+  for (let i = 0; i < rotationIndex; i++) {
     const first = availableKeys.shift();
     if (first) availableKeys.push(first);
   }
 
-  console.log(`[KeyManager] Daily rotation: Day ${rotationDay} of 3-day cycle, primary: ${availableKeys[0]?.name}, fallbacks: [${availableKeys.slice(1).map(k => k.name).join(', ')}]`);
-  console.log(`[KeyManager] Total keys configured: ${availableKeys.length}`);
+  console.log(`[KeyManager] Round-robin rotation: Request #${requestCounter}, using: ${availableKeys[0]?.name}, fallbacks: [${availableKeys.slice(1).map(k => k.name).join(', ')}]`);
+  console.log(`[KeyManager] Total keys configured: ${availableKeys.length} (${availableKeys.length * 50} requests/day on free tier, ${availableKeys.length * 1000} if upgraded)`);
 
   return availableKeys;
 }
