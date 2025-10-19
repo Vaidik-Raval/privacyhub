@@ -103,11 +103,11 @@ export function MethodologySection() {
   ];
 
   const riskLevels = [
-    { level: 'EXEMPLARY (9-10)', color: 'bg-green-100 text-green-800', description: 'Privacy-by-design implementation, exceeds regulatory minimums' },
+    { level: 'EXEMPLARY (10)', color: 'bg-green-100 text-green-800', description: 'Privacy-by-design implementation, exceeds DPDP Act minimums' },
     { level: 'LOW RISK (8-9)', color: 'bg-blue-100 text-blue-800', description: 'Strong privacy framework with minor gaps' },
-    { level: 'MODERATE (6-7)', color: 'bg-yellow-100 text-yellow-800', description: 'Some privacy protections present, areas for improvement' },
-    { level: 'MODERATE-HIGH (4-5)', color: 'bg-orange-100 text-orange-800', description: 'Multiple compliance gaps, user privacy compromised' },
-    { level: 'HIGH RISK (1-3)', color: 'bg-red-100 text-red-800', description: 'Significant privacy violations likely, regulatory action probable' }
+    { level: 'MODERATE RISK (6-7)', color: 'bg-yellow-100 text-yellow-800', description: 'Some privacy protections present, improvement areas identified' },
+    { level: 'MODERATE-HIGH RISK (4-5)', color: 'bg-orange-100 text-orange-800', description: 'Multiple compliance gaps, Data Principal rights compromised' },
+    { level: 'HIGH RISK (1-3)', color: 'bg-red-100 text-red-800', description: 'Significant DPDP Act violations likely, Data Protection Board action probable' }
   ];
 
   return (

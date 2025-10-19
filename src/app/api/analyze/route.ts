@@ -357,8 +357,8 @@ Provide your response in this JSON format:
   },
   "critical_findings": {
     "high_risk_practices": ["specific practices that pose significant privacy risks for Indian users"],
-    "dpdp_gaps": ["DPDP Act compliance requirements not met"],
-    "data_principal_impacts": ["potential harms to Indian Data Principals"]
+    "regulatory_gaps": ["DPDP Act compliance requirements not met"],
+    "data_subject_impacts": ["potential harms to Indian Data Principals"]
   },
   "positive_practices": ["privacy-protective practices that exceed DPDP Act minimum requirements"],
   "actionable_recommendations": {

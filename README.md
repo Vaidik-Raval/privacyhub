@@ -55,8 +55,8 @@ PrivacyHub is a production-ready, AI-powered privacy policy analyzer that empowe
 - **🔐 Advanced Privacy Analysis**
   - AI-powered comprehensive privacy policy evaluation
   - India DPDP Act 2023 compliance assessment
-  - 6 weighted categories: Data Collection (30%), Data Sharing (25%), User Rights (20%), Security (15%), Compliance (7%), Transparency (3%)
-  - 5-tier risk classification (HIGH, MODERATE-HIGH, MODERATE, LOW, EXEMPLARY)
+  - 6 weighted categories: Data Minimization & Collection (30%), Third-Party Data Sharing (25%), Individual Rights & Controls (20%), Security & Risk Management (15%), Regulatory Compliance (7%), Transparency & Communication (3%)
+  - 5-tier risk classification (HIGH RISK, MODERATE-HIGH RISK, MODERATE RISK, LOW RISK, EXEMPLARY)
   - Letter grades (A+ to F) for quick assessment
   - Evidence-based findings with specific DPDP Act regulatory references
 
@@ -154,11 +154,11 @@ PrivacyHub uses a scientifically-grounded, evidence-based framework for privacy 
 
 ### Risk Classification
 
-- **EXEMPLARY (9-10)**: Privacy-by-design, exceeds regulatory minimums
+- **EXEMPLARY (10)**: Privacy-by-design implementation, exceeds DPDP Act minimums
 - **LOW RISK (8-9)**: Strong privacy framework with minor gaps
-- **MODERATE (6-7)**: Some protections present, areas for improvement
-- **MODERATE-HIGH (4-5)**: Multiple compliance gaps, user privacy compromised
-- **HIGH RISK (1-3)**: Significant violations likely, regulatory action probable
+- **MODERATE RISK (6-7)**: Some privacy protections present, improvement areas identified
+- **MODERATE-HIGH RISK (4-5)**: Multiple compliance gaps, Data Principal rights compromised
+- **HIGH RISK (1-3)**: Significant DPDP Act violations likely, Data Protection Board action probable
 
 [View Full Methodology](https://privacyhub.in/methodology)
 

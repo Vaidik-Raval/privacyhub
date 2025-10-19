@@ -455,12 +455,12 @@ export default function PrivacyAnalyzer() {
                     <div className="space-y-1.5">
                       {Object.entries(result.analysis.categories).slice(0, 6).map(([key, category]) => {
                         const categoryNames: Record<string, string> = {
-                          'data_collection': 'Data Collection',
-                          'data_sharing': 'Data Sharing',
-                          'user_rights': 'User Rights',
-                          'security_measures': 'Security',
-                          'compliance_framework': 'Compliance',
-                          'transparency': 'Transparency'
+                          'data_collection': 'Data Minimization & Collection',
+                          'data_sharing': 'Third-Party Data Sharing',
+                          'user_rights': 'Individual Rights & Controls',
+                          'security_measures': 'Security & Risk Management',
+                          'compliance_framework': 'Regulatory Compliance',
+                          'transparency': 'Transparency & Communication'
                         };
 
                         return (
@@ -602,6 +602,15 @@ export default function PrivacyAnalyzer() {
                 
                 <div className="grid gap-4">
                   {Object.entries(result.analysis.categories).map(([key, category]) => {
+                    const categoryNames: Record<string, string> = {
+                      'data_collection': 'Data Minimization & Collection',
+                      'data_sharing': 'Third-Party Data Sharing',
+                      'user_rights': 'Individual Rights & Controls',
+                      'security_measures': 'Security & Risk Management',
+                      'compliance_framework': 'Regulatory Compliance',
+                      'transparency': 'Transparency & Communication'
+                    };
+
                     const getIcon = (categoryKey: string) => {
                       switch (categoryKey) {
                         case 'data_collection': return <Shield className="h-5 w-5" />;
@@ -613,11 +622,11 @@ export default function PrivacyAnalyzer() {
                         default: return <Shield className="h-5 w-5" />;
                       }
                     };
-                    
+
                     return (
                       <ScoreCard
                         key={key}
-                        title={key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        title={categoryNames[key] || key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                         score={category.score}
                         description={category.reasoning}
                         icon={getIcon(key)}
@@ -635,6 +644,15 @@ export default function PrivacyAnalyzer() {
                 <div className="space-y-6">
                   <Heatmap
                     data={Object.entries(result.analysis.categories).map(([key, category]) => {
+                      const categoryNames: Record<string, string> = {
+                        'data_collection': 'Data Minimization & Collection',
+                        'data_sharing': 'Third-Party Data Sharing',
+                        'user_rights': 'Individual Rights & Controls',
+                        'security_measures': 'Security & Risk Management',
+                        'compliance_framework': 'Regulatory Compliance',
+                        'transparency': 'Transparency & Communication'
+                      };
+
                       const weights: Record<string, number> = {
                         'data_collection': 30,
                         'data_sharing': 25,
@@ -643,9 +661,9 @@ export default function PrivacyAnalyzer() {
                         'compliance_framework': 7,
                         'transparency': 3
                       };
-                      
+
                       return {
-                        label: key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                        label: categoryNames[key] || key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
                         value: category.score,
                         weight: weights[key] || 10
                       };
@@ -658,15 +676,26 @@ export default function PrivacyAnalyzer() {
                       <FileText className="h-4 w-4 text-orange-600" />
                       DPDP Act 2023 Compliance Notes
                     </h5>
-                    {Object.entries(result.analysis.categories).map(([key, category]) => (
-                      category.dpdp_notes && (
-                        <div key={key} className="bg-orange-50 border-l-4 border-orange-200 p-3 rounded">
-                          <p className="text-sm text-orange-800">
-                            <strong>{key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> {category.dpdp_notes}
-                          </p>
-                        </div>
-                      )
-                    ))}
+                    {Object.entries(result.analysis.categories).map(([key, category]) => {
+                      const categoryNames: Record<string, string> = {
+                        'data_collection': 'Data Minimization & Collection',
+                        'data_sharing': 'Third-Party Data Sharing',
+                        'user_rights': 'Individual Rights & Controls',
+                        'security_measures': 'Security & Risk Management',
+                        'compliance_framework': 'Regulatory Compliance',
+                        'transparency': 'Transparency & Communication'
+                      };
+
+                      return (
+                        category.dpdp_notes && (
+                          <div key={key} className="bg-orange-50 border-l-4 border-orange-200 p-3 rounded">
+                            <p className="text-sm text-orange-800">
+                              <strong>{categoryNames[key] || key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> {category.dpdp_notes}
+                            </p>
+                          </div>
+                        )
+                      );
+                    })}
                   </div>
                 </div>
               </CardContent>
