@@ -416,6 +416,22 @@ export async function POST(request: NextRequest) {
     const env = cfRequest.env as Record<string, string | undefined> | undefined;
     const FIRECRAWL_API_KEY = env?.FIRECRAWL_API_KEY || process.env.FIRECRAWL_API_KEY;
 
+    // Diagnostic logging for environment variable availability (without exposing actual keys)
+    console.log('[Env Check] Available OpenRouter keys:', {
+      from_env_binding: {
+        OPENROUTER_API: !!env?.OPENROUTER_API,
+        OPENROUTER_API_1: !!env?.OPENROUTER_API_1,
+        OPENROUTER_API_2: !!env?.OPENROUTER_API_2,
+      },
+      from_process_env: {
+        OPENROUTER_API: !!process.env.OPENROUTER_API,
+        OPENROUTER_API_1: !!process.env.OPENROUTER_API_1,
+        OPENROUTER_API_2: !!process.env.OPENROUTER_API_2,
+      },
+      env_binding_available: !!env,
+      db_available: !!db,
+    });
+
     // No need to check OPENROUTER_API here - the key manager will handle it
 
     // Initialize D1 database schema on first access (idempotent, non-blocking)
@@ -768,8 +784,20 @@ export async function POST(request: NextRequest) {
           max_tokens: 4000,
         });
 
-        analysisText = completion.choices[0]?.message?.content;
-        console.log(`[OpenRouter] Response received, length: ${analysisText?.length || 0}, finish_reason: ${completion.choices[0]?.finish_reason}`);
+        console.log('[OpenRouter] Raw completion response:', JSON.stringify({
+          id: completion.id,
+          model: completion.model,
+          choices_length: completion.choices?.length,
+          has_choices: !!completion.choices,
+          first_choice_exists: !!completion.choices?.[0]
+        }));
+
+        if (!completion.choices || completion.choices.length === 0) {
+          throw new Error('OpenRouter returned empty choices array. Response: ' + JSON.stringify(completion));
+        }
+
+        analysisText = completion.choices?.[0]?.message?.content;
+        console.log(`[OpenRouter] Response received, length: ${analysisText?.length || 0}, finish_reason: ${completion.choices?.[0]?.finish_reason}`);
 
         if (analysisText) {
           console.log(`[Analysis] ✓ Successfully completed using ${keyName}`);
@@ -929,7 +957,7 @@ export async function POST(request: NextRequest) {
 
     // Always return error details for better debugging
     return NextResponse.json({
-      error: 'Analysis failed. Please try again or contact support if the issue persists.',
+      error: 'Analysis failed. Please try again or contact us or raise an issue on GitHub if the issue persists.',
       details: errorMessage,
       debugInfo: {
         errorType: error instanceof Error ? error.constructor.name : typeof error,
