@@ -663,7 +663,8 @@ export async function POST(request: NextRequest) {
     // Capture homepage screenshot using Firecrawl (non-blocking, best effort)
     if (FIRECRAWL_API_KEY) {
       try {
-        console.log('Attempting to capture homepage screenshot with Firecrawl...');
+        console.log('[Screenshot] Attempting to capture homepage screenshot with Firecrawl...');
+        console.log('[Screenshot] Homepage URL:', homepageUrl);
         const firecrawl = getFirecrawlClient(FIRECRAWL_API_KEY);
 
         const screenshotResult = await (firecrawl as unknown as {
@@ -687,7 +688,8 @@ export async function POST(request: NextRequest) {
         // Extract screenshot URL from response
         if (screenshotResult) {
           const response = screenshotResult as Record<string, unknown>;
-          console.log('[Screenshot] Firecrawl response structure:', JSON.stringify(response, null, 2).substring(0, 500));
+          console.log('[Screenshot] Firecrawl response received');
+          console.log('[Screenshot] Response keys:', Object.keys(response));
 
           // V4 format
           if (response.data && typeof response.data === 'object') {
@@ -720,28 +722,44 @@ export async function POST(request: NextRequest) {
       } catch (screenshotError) {
         // Non-blocking: Log error but continue with analysis
         const errorMsg = screenshotError instanceof Error ? screenshotError.message : String(screenshotError);
-        console.warn('[Screenshot] ✗ Firecrawl screenshot failed, will try Crawlee fallback:', errorMsg);
+        console.error('[Screenshot] ✗ Firecrawl screenshot failed:', {
+          error: errorMsg,
+          url: homepageUrl,
+          hasApiKey: !!FIRECRAWL_API_KEY
+        });
+        console.log('[Screenshot] Will try Crawlee fallback...');
       }
     } else {
       console.log('[Screenshot] FIRECRAWL_API_KEY not available, skipping Firecrawl screenshot attempt');
+      console.log('[Screenshot] Will try Crawlee fallback directly...');
     }
 
     // Fallback to Crawlee for screenshot if Firecrawl failed or not available
     if (!homepageScreenshot) {
       try {
-        console.log('[Screenshot] Attempting to capture homepage screenshot with Crawlee...');
+        console.log('[Screenshot] Attempting to capture homepage screenshot with Crawlee Playwright...');
+        console.log('[Screenshot] Note: This may fail on Vercel if Playwright binaries are not installed');
         const crawleeResult = await scrapeWithCrawlee(homepageUrl, true);
+        console.log('[Screenshot] Crawlee result keys:', Object.keys(crawleeResult));
+        console.log('[Screenshot] Has screenshot:', !!crawleeResult.screenshot);
+
         if (crawleeResult.screenshot) {
           homepageScreenshot = crawleeResult.screenshot;
           console.log('[Screenshot] ✓ Captured successfully with Crawlee');
-          console.log('[Screenshot] Screenshot format:', crawleeResult.screenshot.substring(0, 50) + '...');
+          console.log('[Screenshot] Screenshot size:', crawleeResult.screenshot.length, 'chars');
+          console.log('[Screenshot] Screenshot preview:', crawleeResult.screenshot.substring(0, 50) + '...');
         } else {
-          console.log('[Screenshot] ✗ Crawlee returned no screenshot');
+          console.log('[Screenshot] ✗ Crawlee returned no screenshot (screenshot field missing or empty)');
         }
       } catch (screenshotError) {
         // Non-blocking: Log error but continue with analysis
         const errorMsg = screenshotError instanceof Error ? screenshotError.message : String(screenshotError);
-        console.warn('[Screenshot] ✗ Failed to capture homepage screenshot with Crawlee (non-critical):', errorMsg);
+        const errorStack = screenshotError instanceof Error ? screenshotError.stack : undefined;
+        console.error('[Screenshot] ✗ Crawlee screenshot failed:', {
+          error: errorMsg,
+          stack: errorStack?.substring(0, 200),
+          url: homepageUrl
+        });
       }
     }
 
@@ -749,7 +767,8 @@ export async function POST(request: NextRequest) {
     if (homepageScreenshot) {
       console.log('[Screenshot] ✓ Screenshot ready for response (length:', homepageScreenshot.length, ')');
     } else {
-      console.log('[Screenshot] ⚠ No screenshot available - will display N/A in UI');
+      console.warn('[Screenshot] ⚠️  No screenshot available - analysis will proceed without homepage preview');
+      console.log('[Screenshot] Possible reasons: Firecrawl API limit, Playwright not available on Vercel, or site blocking screenshots');
     }
 
     console.log('Analyzing privacy policy with AI...');
