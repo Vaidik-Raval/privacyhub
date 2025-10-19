@@ -15,8 +15,9 @@ import {
 } from '@/lib/d1-database';
 import type { CloudflareRequest } from '@/types/cloudflare';
 
-// Configure Vercel timeout (max 60 seconds on Pro plan, 10 seconds on Hobby)
-export const maxDuration = 60; // seconds
+// Cloudflare Workers runtime configuration
+// Note: Workers have 30s CPU time on free plan, 30s/50s/unlimited on paid plans
+// No maxDuration export needed - handled by Cloudflare Workers platform
 export const dynamic = 'force-dynamic';
 
 // Initialize OpenAI client with best available API key
@@ -130,7 +131,7 @@ async function scrapeWithCrawlee(url: string, captureScreenshot: boolean = false
         },
       },
 
-      // Browser launch options for Vercel compatibility
+      // Browser launch options for Cloudflare Workers compatibility
       launchContext: {
         launchOptions: {
           args: [

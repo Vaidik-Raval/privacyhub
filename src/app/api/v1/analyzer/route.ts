@@ -4,8 +4,8 @@ import FirecrawlApp from '@mendable/firecrawl-js';
 import { PlaywrightCrawler } from '@crawlee/playwright';
 import { validateUrl } from '@/lib/input-validation';
 
-// Configure Vercel timeout
-export const maxDuration = 60;
+// Cloudflare Workers runtime configuration
+// Workers have 30s CPU time on free plan, configurable on paid plans
 export const dynamic = 'force-dynamic';
 
 // Initialize OpenAI client
