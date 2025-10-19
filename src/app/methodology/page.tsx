@@ -1,22 +1,7 @@
-import type { Metadata } from "next";
-import { MethodologySection } from '@/components/MethodologySection';
+'use client';
 
-export const metadata: Metadata = {
-  title: "Analysis Methodology | PrivacyHub.in",
-  description: "Learn about our evidence-based privacy assessment framework with regulatory compliance standards, 90+ privacy criteria, and professional scoring methodology.",
-  keywords: "privacy analysis methodology, GDPR compliance, CCPA assessment, privacy scoring, regulatory compliance, privacy framework",
-  openGraph: {
-    title: "Analysis Methodology | PrivacyHub.in",
-    description: "Evidence-based privacy assessment framework with regulatory compliance standards",
-    type: "website",
-    url: "https://privacyhub.in/methodology",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Analysis Methodology | PrivacyHub.in",
-    description: "Evidence-based privacy assessment framework with regulatory compliance standards",
-  },
-};
+import { MethodologySection } from '@/components/MethodologySection';
+import { ShareButtons } from '@/components/ShareButtons';
 
 export default function MethodologyPage() {
   return (
@@ -173,6 +158,13 @@ export default function MethodologyPage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Spread Privacy Awareness */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <ShareButtons />
         </div>
       </section>
     </div>

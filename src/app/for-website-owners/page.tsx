@@ -1,18 +1,9 @@
-import type { Metadata } from "next";
+'use client';
+
 import { Mail, Github, MessageSquare, Handshake, Target, Users, CheckCircle, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
-export const metadata: Metadata = {
-  title: "For Website Owners & Organizations | PrivacyHub.in",
-  description: "Collaborate with PrivacyHub.in to improve privacy policy analysis, provide feedback, and work together to build better privacy practices for the web.",
-  openGraph: {
-    title: "For Website Owners & Organizations | PrivacyHub.in",
-    description: "Collaborate with PrivacyHub.in to improve privacy policy analysis and build better privacy practices",
-    type: "website",
-    url: "https://privacyhub.in/for-website-owners",
-  },
-};
+import { ShareButtons } from '@/components/ShareButtons';
 
 export default function ForWebsiteOwnersPage() {
   return (
@@ -345,6 +336,13 @@ export default function ForWebsiteOwnersPage() {
               </a>
             </Button>
           </div>
+        </div>
+      </section>
+
+      {/* Spread Privacy Awareness */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <ShareButtons />
         </div>
       </section>
     </div>

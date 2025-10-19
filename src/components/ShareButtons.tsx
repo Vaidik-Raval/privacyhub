@@ -18,37 +18,51 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Share2, Check, Copy } from 'lucide-react';
 
 interface ShareButtonsProps {
-  url: string;
+  url?: string;
   title?: string;
   description?: string;
   privacyGrade?: string;
   overallScore?: number;
+  pageType?: 'analysis' | 'general';
 }
 
 export function ShareButtons({
   url,
-  title = "Privacy Policy Analysis",
+  title,
   description,
   privacyGrade,
-  overallScore
+  overallScore,
+  pageType = 'general'
 }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
 
-  // Extract domain from URL
-  const domain = new URL(url).hostname;
-
   // Build share content
-  const shareUrl = typeof window !== 'undefined' ? window.location.href : url;
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : (url || 'https://privacyhub.in');
 
-  const defaultDescription = description ||
-    `I analyzed ${domain}'s privacy policy using PrivacyHub.in - India's DPDP Act 2023 compliance checker. Check your app's privacy score!`;
+  // For analysis pages
+  const isAnalysisPage = pageType === 'analysis' || (privacyGrade && overallScore);
 
-  const shareTitle = title ||
-    (privacyGrade && overallScore
+  let defaultTitle = "PrivacyHub - Privacy Policy Analyzer for India";
+  let defaultDescription = "Analyze privacy policies for DPDP Act 2023 compliance. AI-powered privacy analysis helping Indians make informed choices about their data.";
+  let emailBodyContent = `I found this helpful resource for understanding privacy policies and DPDP Act 2023 compliance.
+
+PrivacyHub.in is India's first AI-powered privacy policy analyzer. It helps you:
+• Understand complex privacy policies in simple language
+• Check DPDP Act 2023 compliance
+• Make informed decisions about your data
+• Know your rights as a Data Principal
+
+Check it out: ${shareUrl}`;
+
+  if (isAnalysisPage && url) {
+    const domain = new URL(url).hostname;
+    defaultTitle = privacyGrade && overallScore
       ? `${domain} Privacy Score: ${overallScore}/10 (Grade ${privacyGrade}) - DPDP Act Analysis`
-      : `Privacy Policy Analysis for ${domain} - PrivacyHub.in`);
+      : `Privacy Policy Analysis for ${domain} - PrivacyHub.in`;
 
-  const emailBody = `I just analyzed ${domain}'s privacy policy for DPDP Act 2023 compliance using PrivacyHub.in.
+    defaultDescription = `I analyzed ${domain}'s privacy policy using PrivacyHub.in - India's DPDP Act 2023 compliance checker. Check your app's privacy score!`;
+
+    emailBodyContent = `I just analyzed ${domain}'s privacy policy for DPDP Act 2023 compliance using PrivacyHub.in.
 
 ${privacyGrade && overallScore ? `Privacy Grade: ${privacyGrade}
 Overall Score: ${overallScore}/10
@@ -56,6 +70,11 @@ Overall Score: ${overallScore}/10
 ` : ''}Check it out and analyze your favorite apps too: ${shareUrl}
 
 PrivacyHub helps you understand what apps do with your data and how they comply with India's Digital Personal Data Protection Act 2023.`;
+  }
+
+  const shareTitle = title || defaultTitle;
+  const shareDescription = description || defaultDescription;
+  const emailBody = emailBodyContent;
 
   const handleCopyLink = async () => {
     try {
@@ -79,7 +98,9 @@ PrivacyHub helps you understand what apps do with your data and how they comply 
               Spread Privacy Awareness
             </h4>
             <p className="text-sm text-purple-800 mb-4">
-              Share this analysis to help others understand privacy policies and make informed choices about their data.
+              {isAnalysisPage
+                ? "Share this analysis to help others understand privacy policies and make informed choices about their data."
+                : "Help others discover their privacy rights and learn about DPDP Act 2023 compliance."}
             </p>
 
             {/* Social Share Buttons */}

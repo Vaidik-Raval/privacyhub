@@ -1,22 +1,7 @@
-import type { Metadata } from "next";
-import { SupportSection } from '@/components/SupportSection';
+'use client';
 
-export const metadata: Metadata = {
-  title: "Support PrivacyHub | Keep Privacy Analysis Free",
-  description: "Help maintain PrivacyHub as a free privacy service by supporting our infrastructure costs. Transparent funding for Firecrawl, OpenRouter, and Vercel hosting.",
-  keywords: "support privacy tools, donate privacy analysis, open source privacy, infrastructure costs, privacy funding",
-  openGraph: {
-    title: "Support PrivacyHub | Keep Privacy Analysis Free",
-    description: "Help maintain PrivacyHub as a free privacy service by supporting our infrastructure costs",
-    type: "website",
-    url: "https://privacyhub.in/support",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Support PrivacyHub | Keep Privacy Analysis Free",
-    description: "Help maintain PrivacyHub as a free privacy service by supporting our infrastructure costs",
-  },
-};
+import { SupportSection } from '@/components/SupportSection';
+import { ShareButtons } from '@/components/ShareButtons';
 
 export default function SupportPage() {
   return (
@@ -210,6 +195,13 @@ export default function SupportPage() {
               </button>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Spread Privacy Awareness */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <ShareButtons />
         </div>
       </section>
     </div>

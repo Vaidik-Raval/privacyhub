@@ -812,6 +812,7 @@ export default function PrivacyAnalyzer() {
             url={result.url}
             privacyGrade={result.analysis.privacy_grade}
             overallScore={result.analysis.overall_score}
+            pageType="analysis"
           />
 
           {/* Methodology Section */}

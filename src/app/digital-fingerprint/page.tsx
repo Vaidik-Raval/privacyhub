@@ -1,22 +1,7 @@
-import type { Metadata } from "next";
-import { DigitalFingerprintProfessional } from '@/components/DigitalFingerprintProfessional';
+'use client';
 
-export const metadata: Metadata = {
-  title: "Your Digital Fingerprint Analysis | PrivacyHub.in",
-  description: "Discover your unique digital fingerprint and learn what information websites can automatically collect about you. Comprehensive privacy awareness tool with 500+ data points analysis.",
-  keywords: "digital fingerprint, browser fingerprinting, privacy analysis, online tracking, device fingerprinting, privacy awareness",
-  openGraph: {
-    title: "Your Digital Fingerprint Analysis | PrivacyHub.in",
-    description: "Comprehensive digital fingerprint analysis tool that reveals 500+ data points about your device",
-    type: "website",
-    url: "https://privacyhub.in/digital-fingerprint",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Your Digital Fingerprint Analysis | PrivacyHub.in",
-    description: "Comprehensive digital fingerprint analysis tool that reveals 500+ data points about your device",
-  },
-};
+import { DigitalFingerprintProfessional } from '@/components/DigitalFingerprintProfessional';
+import { ShareButtons } from '@/components/ShareButtons';
 
 export default function DigitalFingerprintPage() {
   return (
@@ -263,6 +248,13 @@ export default function DigitalFingerprintPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Spread Privacy Awareness */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <ShareButtons />
         </div>
       </section>
     </div>

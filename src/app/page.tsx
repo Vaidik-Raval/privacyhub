@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import PrivacyAnalyzer from '@/components/PrivacyAnalyzer';
 import { AnalysisHistoryCards } from '@/components/AnalysisHistoryCards';
+import { ShareButtons } from '@/components/ShareButtons';
 
 export default function HomePage() {
   return (
@@ -256,6 +257,13 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Spread Privacy Awareness */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <ShareButtons />
         </div>
       </section>
     </div>
