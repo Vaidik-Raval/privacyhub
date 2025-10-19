@@ -57,6 +57,8 @@ export interface CloudflareEnv {
   "an-db": D1Database;
   CACHE?: KVNamespace;
   OPENROUTER_API: string;
+  OPENROUTER_API_1?: string;
+  OPENROUTER_API_2?: string;
   FIRECRAWL_API_KEY?: string;
 }
 
