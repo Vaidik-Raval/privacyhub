@@ -122,13 +122,21 @@ export async function getBestAvailableKey(env?: Record<string, string | undefine
     return null;
   }
 
+  // Track first available key as fallback
+  let fallbackKey: { name: string; key: string } | null = null;
+
   // Check each key's status
   for (const { name, key } of allKeys) {
+    // Store first key as fallback
+    if (!fallbackKey) {
+      fallbackKey = { name, key };
+    }
+
     const cached = keyStatusCache[name];
 
-    // Skip if explicitly marked as failed recently
-    if (cached && isCacheValid(cached.lastChecked) && !cached.isAvailable) {
-      console.log(`[KeyManager] Skipping ${name} (marked as failed: ${cached.error})`);
+    // Skip if explicitly marked as failed recently (rate limited)
+    if (cached && isCacheValid(cached.lastChecked) && !cached.isAvailable && cached.error?.includes('rate limit')) {
+      console.log(`[KeyManager] Skipping ${name} (rate limited: ${cached.error})`);
       continue;
     }
 
@@ -138,7 +146,7 @@ export async function getBestAvailableKey(env?: Record<string, string | undefine
       return { key, name };
     }
 
-    // Check key status if cache is stale or unavailable (non-blocking)
+    // Check key status if cache is stale or unavailable (non-blocking, best-effort)
     console.log(`[KeyManager] Checking ${name} status...`);
     const status = await checkKeyCredits(key);
 
@@ -153,22 +161,27 @@ export async function getBestAvailableKey(env?: Record<string, string | undefine
       error: status.error,
     };
 
-    // Return key even if credit check failed (optimistic approach)
-    // Only skip if explicitly rate limited
+    // Return if credit check succeeded
     if (status.isAvailable && status.rateLimitRemaining > 0) {
       console.log(`[KeyManager] ✓ Selected ${name} (${status.rateLimitRemaining} requests remaining)`);
       return { key, name };
-    } else if (!status.isAvailable) {
-      console.warn(`[KeyManager] ${name} credit check failed (${status.error}), but will try next key`);
+    } else if (status.rateLimitRemaining === 0) {
+      console.warn(`[KeyManager] ${name} rate limited, trying next key`);
       continue;
     } else {
-      // Credit check failed but try anyway
-      console.warn(`[KeyManager] ${name} status unclear, using it anyway (optimistic)`);
+      // Credit check failed but not rate limited - use it anyway
+      console.warn(`[KeyManager] ${name} credit check failed (${status.error}), but using it anyway (optimistic)`);
       return { key, name };
     }
   }
 
-  console.error('[KeyManager] No available keys found');
+  // If all checks failed, use fallback (first available key)
+  if (fallbackKey) {
+    console.warn(`[KeyManager] All credit checks failed, using fallback key: ${fallbackKey.name}`);
+    return fallbackKey;
+  }
+
+  console.error('[KeyManager] No API keys configured');
   return null;
 }
 
