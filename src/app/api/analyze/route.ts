@@ -4,6 +4,15 @@ import FirecrawlApp from '@mendable/firecrawl-js';
 import { PlaywrightCrawler } from '@crawlee/playwright';
 import { validateUrl } from '@/lib/input-validation';
 import { getBestAvailableKey, markKeyAsFailed } from '@/lib/openrouter-key-manager';
+import {
+  getCachedAnalysis,
+  saveAnalysis,
+  generateContentHash,
+  extractDomain,
+  type D1Database,
+  type AnalysisData
+} from '@/lib/d1-database';
+import type { CloudflareRequest } from '@/types/cloudflare';
 
 // Configure Vercel timeout (max 60 seconds on Pro plan, 10 seconds on Hobby)
 export const maxDuration = 60; // seconds
@@ -404,6 +413,10 @@ export async function POST(request: NextRequest) {
       console.error('OPENROUTER_API not configured');
       return NextResponse.json({ error: 'API configuration error. OPENROUTER_API not found.' }, { status: 500 });
     }
+
+    // Get D1 database binding from Cloudflare Workers environment
+    const cfRequest = request as CloudflareRequest;
+    const db: D1Database | undefined = cfRequest.env?.DB;
 
     console.log('Scraping URL:', sanitizedUrl);
 

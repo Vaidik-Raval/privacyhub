@@ -1,0 +1,39 @@
+name = "privacyhub"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = ".vercel/output/static"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "privacyhub-db"
+database_id = "your-database-id-here" # Replace with actual D1 database ID after creation
+
+# KV namespace for caching (optional, can use D1 for everything)
+[[kv_namespaces]]
+binding = "CACHE"
+id = "your-kv-namespace-id" # Replace with actual KV namespace ID
+preview_id = "your-preview-kv-namespace-id" # For preview deployments
+
+# Environment variables
+[vars]
+NODE_ENV = "production"
+
+# Secrets (set via wrangler secret put command)
+# OPENROUTER_API
+# FIRECRAWL_API_KEY
+
+# Compatibility flags
+compatibility_flags = ["nodejs_compat"]
+
+# Build configuration
+[build]
+command = "npm run build"
+
+# Routes configuration for Next.js on Pages
+[[routes]]
+pattern = "/api/*"
+custom_headers = { "Cache-Control" = "no-cache" }
+
+[[routes]]
+pattern = "/_next/static/*"
+custom_headers = { "Cache-Control" = "public, max-age=31536000, immutable" }
