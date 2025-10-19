@@ -19,48 +19,94 @@ export default function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
                 <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                Your Privacy Matters
+                Your Privacy is Your Right
               </div>
-              
+
               <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-                Know What Apps Do With Your Data. Make Informed Choices.
+                Understand How Apps & Websites Use Your Personal Data
               </h1>
               <p className="text-lg md:text-xl text-slate-600 mb-8 leading-relaxed">
-                Privacy policies are long, confusing, and full of legal jargon. We read them for you and explain
-                what they really mean in simple language. Get instant privacy scores, understand your rights
-                under India&rsquo;s DPDP Act 2023, and make better decisions about the apps you trust with your personal information.
+                Every app you download, every website you visit collects your personal information. But do you know what they do with it?
+                Privacy policies are written in complex legal language that nobody reads. <strong>We make them simple.</strong>
               </p>
+
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-5 mb-8 rounded-r-lg">
+                <p className="text-blue-900 font-medium">
+                  <span className="text-2xl mr-2">💡</span>
+                  Get instant privacy scores, understand your rights under India&apos;s DPDP Act 2023, and make safer choices
+                  about the apps and websites you trust with your personal information.
+                </p>
+              </div>
 
               {/* Privacy Policy Analyser - Moved to top */}
               <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 mb-8">
                 <div className="text-center mb-6">
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Privacy Policy Analyser</h3>
-                  <p className="text-sm text-slate-600">Enter any website or app privacy policy URL to get an instant AI-powered analysis</p>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-3">🔍 Free Privacy Policy Analyzer</h3>
+                  <p className="text-base text-slate-600 max-w-2xl mx-auto">
+                    Paste any privacy policy link below. Our AI reads the entire policy in seconds and gives you a simple,
+                    easy-to-understand report with a privacy score from 1 to 10.
+                  </p>
                 </div>
                 <div id="analyzer">
                   <PrivacyAnalyzer />
                 </div>
+                <div className="mt-4 text-center">
+                  <p className="text-xs text-slate-500">
+                    ✓ Free Forever &nbsp; • &nbsp; ✓ No Account Required &nbsp; • &nbsp; ✓ Results in 30 Seconds
+                  </p>
+                </div>
               </div>
 
               {/* Privacy Concerns - India Specific */}
-              <div className="bg-orange-50 rounded-lg p-6 mb-8 border border-orange-200">
-                <h3 className="text-lg font-bold text-orange-800 mb-4">Common Privacy Concerns in India:</h3>
-                <div className="grid grid-cols-1 gap-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-sm text-orange-700"><strong>Data Monetization:</strong> Payment apps, e-commerce, and food delivery services may sell your information to third parties</span>
+              <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 mb-8 border-2 border-orange-200">
+                <h3 className="text-2xl font-bold text-orange-900 mb-2 flex items-center gap-2">
+                  <span>⚠️</span> What You Should Know About Your Privacy in India
+                </h3>
+                <p className="text-sm text-orange-700 mb-5">These are real issues affecting millions of Indian users every day:</p>
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="bg-white/60 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">💰</div>
+                      <div>
+                        <h4 className="font-bold text-orange-900 mb-1">Your Data is Being Sold</h4>
+                        <p className="text-sm text-orange-800">
+                          Payment apps, shopping sites, and food delivery apps collect your purchase history, location, and habits—then sell this information to advertisers and data brokers without clearly telling you.
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-sm text-orange-700"><strong>Identity & Financial Data:</strong> How is your Aadhaar, UPI, and banking information being used and stored?</span>
+                  <div className="bg-white/60 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">🪪</div>
+                      <div>
+                        <h4 className="font-bold text-orange-900 mb-1">Aadhaar & Banking Data at Risk</h4>
+                        <p className="text-sm text-orange-800">
+                          Apps ask for your Aadhaar, PAN, and UPI details. But do they really need it? How long do they keep it? Where is it stored? Most privacy policies don&apos;t clearly explain this.
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-sm text-orange-700"><strong>Cross-Border Data Flow:</strong> Foreign apps storing Indian user data overseas without proper consent</span>
+                  <div className="bg-white/60 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">🌍</div>
+                      <div>
+                        <h4 className="font-bold text-orange-900 mb-1">Your Data Leaving India</h4>
+                        <p className="text-sm text-orange-800">
+                          Many foreign apps store Indian user data in servers abroad. Under India&apos;s DPDP Act 2023, you have the right to know where your data goes and demand it stays protected.
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-sm text-orange-700"><strong>Lack of Transparency:</strong> Complex policies hide how your data is shared and monetized</span>
+                  <div className="bg-white/60 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">🔒</div>
+                      <div>
+                        <h4 className="font-bold text-orange-900 mb-1">Hidden in Legal Jargon</h4>
+                        <p className="text-sm text-orange-800">
+                          Companies bury important information deep in 50-page legal documents. They hope you won&apos;t read it. That&apos;s why we created this tool—to expose what they hide.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -75,52 +121,101 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Why Privacy Matters in India
+              Why Should You Care About Privacy?
             </h2>
-            <p className="text-lg text-slate-600 max-w-4xl mx-auto">
-              Your personal data is incredibly valuable. Companies monetize it, advertisers track you,
-              and hackers want to steal it. India&rsquo;s DPDP Act 2023 gives you protection and rights.
-              Here&rsquo;s what you need to know:
+            <p className="text-lg text-slate-600 max-w-4xl mx-auto leading-relaxed">
+              Your personal data is more valuable than you think. Every photo you upload, every purchase you make, every website you visit—it all gets collected, analyzed, and sold.
+              <strong className="text-slate-800"> India&apos;s new DPDP Act 2023 finally gives you the power to fight back.</strong>
             </p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-8 text-center">
+            <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow border-t-4 border-red-500">
+              <CardContent className="p-8">
                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl">💰</span>
+                  <span className="text-3xl">💰</span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">Your Data = Money</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  E-commerce platforms, payment apps, and online services make billions by selling your shopping habits,
-                  transaction data, and personal preferences to advertisers. The DPDP Act now regulates this practice in India.
+                <h3 className="text-xl font-bold text-slate-900 mb-4 text-center">Your Data is Big Business</h3>
+                <p className="text-slate-700 text-sm leading-relaxed mb-4">
+                  Think your data isn&apos;t worth much? Think again. Companies make ₹10,000+ per year from EACH user by selling:
                 </p>
+                <ul className="text-sm text-slate-600 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500">•</span>
+                    <span>Your shopping habits to advertisers</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500">•</span>
+                    <span>Your location data to marketers</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500">•</span>
+                    <span>Your personal preferences to data brokers</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-slate-500 mt-4 italic">The DPDP Act 2023 now requires companies to tell you how they profit from your data.</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-8 text-center">
+            <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow border-t-4 border-orange-500">
+              <CardContent className="p-8">
                 <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl">👁️</span>
+                  <span className="text-3xl">👁️</span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">24/7 Digital Surveillance</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  Mobile apps track your location constantly. Food delivery, ride-hailing, and messaging services
-                  monitor your contacts, movements, and communications. This data is rarely deleted.
+                <h3 className="text-xl font-bold text-slate-900 mb-4 text-center">You&apos;re Being Watched</h3>
+                <p className="text-slate-700 text-sm leading-relaxed mb-4">
+                  Every app on your phone is tracking you. Most people don&apos;t realize how much:
                 </p>
+                <ul className="text-sm text-slate-600 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-500">•</span>
+                    <span>Your exact location 24/7</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-500">•</span>
+                    <span>Who you call, text, and email</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-500">•</span>
+                    <span>Every website you visit</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-500">•</span>
+                    <span>What you buy, when, and where</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-slate-500 mt-4 italic">This data is stored permanently and never fully deleted.</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl">🇮🇳</span>
+            <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow border-t-4 border-green-500">
+              <CardContent className="p-8">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <span className="text-3xl">🇮🇳</span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">Your Rights Under DPDP Act</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  India&rsquo;s DPDP Act 2023 gives you rights as a Data Principal - access your data, delete it,
-                  correct errors, and refuse data sharing. The Data Protection Board will hear your complaints.
+                <h3 className="text-xl font-bold text-slate-900 mb-4 text-center">You Have Rights Now</h3>
+                <p className="text-slate-700 text-sm leading-relaxed mb-4">
+                  India&apos;s DPDP Act 2023 is a game-changer. For the first time, YOU have legal rights to:
                 </p>
+                <ul className="text-sm text-slate-600 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>See ALL data companies have on you</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>Delete your data permanently</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>Stop companies from selling your info</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>File complaints to Data Protection Board</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-green-700 mt-4 font-medium">It&apos;s time to take control of your digital life.</p>
               </CardContent>
             </Card>
           </div>
@@ -132,11 +227,11 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              How Do Popular Apps Handle Your Privacy?
+              See How Your Favorite Apps Score
             </h2>
-            <p className="text-lg text-slate-600 max-w-3xl mx-auto">
-              Analyze privacy policies of apps and websites you use every day.
-              Discover which ones comply with India&rsquo;s DPDP Act 2023 and which ones misuse your data.
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              We&apos;ve already analyzed hundreds of popular Indian apps and websites. See which ones respect your privacy
+              and which ones are selling your data. <strong className="text-slate-800">The results might shock you.</strong>
             </p>
           </div>
           
@@ -148,11 +243,15 @@ export default function HomePage() {
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">
-              Take Control of Your Digital Privacy
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
+              Start Protecting Your Privacy Today
             </h2>
-            <p className="text-lg text-slate-200 max-w-3xl mx-auto mb-10">
-              Small changes can make a big difference. Simple tools and tips to protect your privacy in India.
+            <p className="text-lg text-slate-200 max-w-3xl mx-auto mb-6 leading-relaxed">
+              You don&apos;t need to be a tech expert. These simple, free tools help you understand
+              and protect your digital privacy right now.
+            </p>
+            <p className="text-base text-blue-300 font-medium">
+              💪 Takes less than 5 minutes • No technical knowledge required
             </p>
           </div>
 
@@ -204,57 +303,112 @@ export default function HomePage() {
           </div>
 
           {/* Quick Privacy Tips - India Specific */}
-          <div className="mt-16 bg-slate-800 rounded-2xl p-8">
-            <h3 className="text-2xl font-bold text-white text-center mb-8">Quick Privacy Tips for Indian Users</h3>
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-sm font-bold">1</span>
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-white mb-2">Review Payment App Permissions</h4>
-                  <p className="text-slate-300 text-sm">
-                    Payment and UPI apps don&rsquo;t need access to your location, contacts, or SMS.
-                    Go to your phone settings and disable unnecessary permissions for better privacy.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-sm font-bold">2</span>
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-white mb-2">Be Careful with Aadhaar Linking</h4>
-                  <p className="text-slate-300 text-sm">
-                    Not every app or website needs your Aadhaar. Only link it to services with legal requirements.
-                    The DPDP Act protects you from excessive Aadhaar linking practices.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-sm font-bold">3</span>
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-white mb-2">Check Data Storage Location</h4>
-                  <p className="text-slate-300 text-sm">
-                    Under DPDP Act, you have the right to know where your data is stored. Foreign apps should
-                    disclose if they store Indian user data overseas. Use our analyzer to check.
-                  </p>
+          <div className="mt-16 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 border-2 border-slate-700">
+            <div className="text-center mb-8">
+              <h3 className="text-3xl font-bold text-white mb-3">
+                5-Minute Privacy Checklist for Indians
+              </h3>
+              <p className="text-slate-300 text-base">
+                Simple actions you can take right now to protect yourself online
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-slate-700/50 rounded-xl p-6 hover:bg-slate-700 transition-colors">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-lg font-bold">1</span>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-white mb-2">Check App Permissions Today</h4>
+                    <p className="text-slate-200 text-sm mb-3">
+                      Your payment apps DON&apos;T need access to your:
+                    </p>
+                    <ul className="text-sm text-slate-300 space-y-1">
+                      <li>❌ Location (unless you&apos;re ordering food)</li>
+                      <li>❌ Contacts (they already have your number)</li>
+                      <li>❌ SMS (for reading OTPs only, not all messages)</li>
+                      <li>❌ Camera/Microphone (unless actively using)</li>
+                    </ul>
+                    <p className="text-xs text-green-300 mt-3 font-medium">→ Go to Settings → Apps → Permissions and turn them OFF</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-sm font-bold">4</span>
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-white mb-2">Exercise Your Right to Delete Data</h4>
-                  <p className="text-slate-300 text-sm">
-                    For apps you no longer use, the DPDP Act gives you the right to request data deletion.
-                    Contact the app&rsquo;s grievance officer to exercise this right.
-                  </p>
+
+              <div className="bg-slate-700/50 rounded-xl p-6 hover:bg-slate-700 transition-colors">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-lg font-bold">2</span>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-white mb-2">Stop Giving Your Aadhaar to Everyone</h4>
+                    <p className="text-slate-200 text-sm mb-3">
+                      Only these services legally need your Aadhaar:
+                    </p>
+                    <ul className="text-sm text-slate-300 space-y-1">
+                      <li>✓ Opening a bank account</li>
+                      <li>✓ Filing income tax returns</li>
+                      <li>✓ Getting a mobile SIM card</li>
+                    </ul>
+                    <p className="text-red-300 text-sm mt-3">
+                      Shopping apps, food delivery, ride-hailing apps <strong>DO NOT</strong> need your Aadhaar. Don&apos;t share it.
+                    </p>
+                    <p className="text-xs text-green-300 mt-2 font-medium">→ Say NO when apps ask for your Aadhaar unnecessarily</p>
+                  </div>
                 </div>
               </div>
+
+              <div className="bg-slate-700/50 rounded-xl p-6 hover:bg-slate-700 transition-colors">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-lg font-bold">3</span>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-white mb-2">Find Out Where Your Data is Stored</h4>
+                    <p className="text-slate-200 text-sm mb-3">
+                      Under DPDP Act 2023, companies MUST tell you:
+                    </p>
+                    <ul className="text-sm text-slate-300 space-y-1">
+                      <li>📍 Where your data is physically stored</li>
+                      <li>🌍 If it&apos;s being sent outside India</li>
+                      <li>🔒 How long they keep it</li>
+                    </ul>
+                    <p className="text-xs text-blue-300 mt-3 font-medium">
+                      → Use our analyzer above to check if apps disclose this information
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-700/50 rounded-xl p-6 hover:bg-slate-700 transition-colors">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-lg font-bold">4</span>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-white mb-2">Delete Your Data from Old Apps</h4>
+                    <p className="text-slate-200 text-sm mb-3">
+                      Apps you don&apos;t use anymore still have your data. The DPDP Act gives you the power to:
+                    </p>
+                    <ul className="text-sm text-slate-300 space-y-1">
+                      <li>🗑️ Request permanent deletion</li>
+                      <li>📧 Contact their Grievance Officer</li>
+                      <li>⚖️ File complaint if they refuse</li>
+                    </ul>
+                    <p className="text-xs text-green-300 mt-3 font-medium">
+                      → Look for &quot;Delete My Account&quot; or &quot;Data Deletion&quot; in app settings
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 bg-blue-900/30 border border-blue-500/50 rounded-lg p-6 text-center">
+              <p className="text-white font-medium text-lg mb-2">
+                💡 Remember: Your privacy is a legal right in India now
+              </p>
+              <p className="text-blue-200 text-sm">
+                Companies that violate the DPDP Act 2023 can be fined up to ₹250 crores. Use your rights!
+              </p>
             </div>
           </div>
         </div>
