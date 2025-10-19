@@ -15,9 +15,9 @@ import {
 } from '@/lib/d1-database';
 import type { CloudflareRequest } from '@/types/cloudflare';
 
-// Cloudflare Workers runtime configuration
-// Note: Workers have 30s CPU time on free plan, 30s/50s/unlimited on paid plans
-// No maxDuration export needed - handled by Cloudflare Workers platform
+// Vercel runtime configuration
+// Extend timeout for privacy policy analysis (OpenRouter API + scraping)
+export const maxDuration = 60; // 60 seconds (Vercel Pro plan)
 export const dynamic = 'force-dynamic';
 
 // Initialize OpenAI client with best available API key
@@ -412,36 +412,20 @@ export async function POST(request: NextRequest) {
 
     const sanitizedUrl = urlValidation.sanitized!;
 
-    // Get Cloudflare Workers environment bindings (with fallback to process.env for local development)
-    const cfRequest = request as CloudflareRequest;
-    const db: D1Database | undefined = cfRequest.env?.["an-db"];
-    const env = cfRequest.env as Record<string, string | undefined> | undefined;
-    const FIRECRAWL_API_KEY = env?.FIRECRAWL_API_KEY || process.env.FIRECRAWL_API_KEY;
+    // Get environment variables (Vercel uses process.env)
+    const FIRECRAWL_API_KEY = process.env.FIRECRAWL_API_KEY;
 
     // Diagnostic logging for environment variable availability (without exposing actual keys)
     console.log('[Env Check] Available OpenRouter keys:', {
-      from_env_binding: {
-        OPENROUTER_API: !!env?.OPENROUTER_API,
-        OPENROUTER_API_1: !!env?.OPENROUTER_API_1,
-        OPENROUTER_API_2: !!env?.OPENROUTER_API_2,
-      },
-      from_process_env: {
-        OPENROUTER_API: !!process.env.OPENROUTER_API,
-        OPENROUTER_API_1: !!process.env.OPENROUTER_API_1,
-        OPENROUTER_API_2: !!process.env.OPENROUTER_API_2,
-      },
-      env_binding_available: !!env,
-      db_available: !!db,
+      OPENROUTER_API: !!process.env.OPENROUTER_API,
+      OPENROUTER_API_1: !!process.env.OPENROUTER_API_1,
+      OPENROUTER_API_2: !!process.env.OPENROUTER_API_2,
     });
 
     // No need to check OPENROUTER_API here - the key manager will handle it
 
-    // Initialize D1 database schema on first access (idempotent, non-blocking)
-    if (db) {
-      initializeDatabase(db).catch(err => {
-        console.warn('[D1 Init] Database initialization failed (non-critical):', err);
-      });
-    }
+    // Note: Database caching not available on Vercel (D1 is Cloudflare-specific)
+    const db = undefined; // No database on Vercel
 
     console.log('Scraping URL:', sanitizedUrl);
 
@@ -813,7 +797,7 @@ export async function POST(request: NextRequest) {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       let currentKeyName = '';
       try {
-        const openaiResult = await getOpenAIClient(env);
+        const openaiResult = await getOpenAIClient();
         if (!openaiResult) {
           throw new Error('No OpenRouter API keys available. Please configure OPENROUTER_API, OPENROUTER_API_1, or OPENROUTER_API_2 environment variables.');
         }
