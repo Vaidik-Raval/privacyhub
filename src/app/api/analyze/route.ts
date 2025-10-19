@@ -660,63 +660,93 @@ export async function POST(request: NextRequest) {
       console.log('[D1] Database not available - proceeding without caching');
     }
 
-    // Capture homepage screenshot using Firecrawl (non-blocking, best effort)
+    // Capture homepage screenshot using Firecrawl V1 API (non-blocking, best effort)
     if (FIRECRAWL_API_KEY) {
       try {
-        console.log('[Screenshot] Attempting to capture homepage screenshot with Firecrawl...');
+        console.log('[Screenshot] Attempting to capture homepage screenshot with Firecrawl V1...');
         console.log('[Screenshot] Homepage URL:', homepageUrl);
         const firecrawl = getFirecrawlClient(FIRECRAWL_API_KEY);
 
-        const screenshotResult = await (firecrawl as unknown as {
-          scrape: (params: {
-            url: string;
-            formats: string[];
-            onlyMainContent?: boolean;
-            waitFor?: number;
-            timeout?: number;
-            mobile?: boolean;
-          }) => Promise<unknown>
-        }).scrape({
-          url: homepageUrl,
-          formats: ['screenshot'], // Screenshot format
-          onlyMainContent: false,
-          waitFor: 2000,
-          timeout: 15000, // Shorter timeout for screenshot
-          mobile: false, // Desktop screenshot
-        });
+        let screenshotResult: unknown;
 
-        // Extract screenshot URL from response
+        // Try full page screenshot first
+        try {
+          console.log('[Screenshot] Trying screenshot@fullPage format...');
+          screenshotResult = await (firecrawl as unknown as {
+            scrape: (params: {
+              url: string;
+              formats: string[];
+              onlyMainContent?: boolean;
+              waitFor?: number;
+              timeout?: number;
+              mobile?: boolean;
+            }) => Promise<unknown>
+          }).scrape({
+            url: homepageUrl,
+            formats: ['screenshot@fullPage'], // V1 API: Full page screenshot
+            onlyMainContent: false,
+            waitFor: 2000,
+            timeout: 20000, // 20 seconds for screenshot
+            mobile: false, // Desktop screenshot
+          });
+          console.log('[Screenshot] Full page screenshot request completed');
+        } catch (fullPageError) {
+          // Fallback to regular screenshot if fullPage fails
+          console.log('[Screenshot] Full page failed, trying regular screenshot...');
+          screenshotResult = await (firecrawl as unknown as {
+            scrape: (params: {
+              url: string;
+              formats: string[];
+              onlyMainContent?: boolean;
+              waitFor?: number;
+              timeout?: number;
+              mobile?: boolean;
+            }) => Promise<unknown>
+          }).scrape({
+            url: homepageUrl,
+            formats: ['screenshot'], // V1 API: Regular screenshot (above fold)
+            onlyMainContent: false,
+            waitFor: 2000,
+            timeout: 15000,
+            mobile: false,
+          });
+          console.log('[Screenshot] Regular screenshot request completed');
+        }
+
+        // Extract screenshot URL from Firecrawl V1 response
         if (screenshotResult) {
           const response = screenshotResult as Record<string, unknown>;
-          console.log('[Screenshot] Firecrawl response received');
-          console.log('[Screenshot] Response keys:', Object.keys(response));
+          console.log('[Screenshot] Firecrawl V1 response received');
+          console.log('[Screenshot] Response structure:', JSON.stringify(Object.keys(response)));
 
-          // V4 format
+          // V1 API: Check for screenshot in data object
           if (response.data && typeof response.data === 'object') {
             const data = response.data as Record<string, unknown>;
             if (typeof data.screenshot === 'string') {
               homepageScreenshot = data.screenshot;
-              console.log('[Screenshot] ✓ Captured successfully with Firecrawl (V4 format)');
+              console.log('[Screenshot] ✓ Captured successfully with Firecrawl V1 (data.screenshot)');
+              console.log('[Screenshot] Screenshot URL:', homepageScreenshot.substring(0, 100) + '...');
             } else {
-              console.log('[Screenshot] V4 data exists but no screenshot field:', Object.keys(data));
+              console.log('[Screenshot] ✗ No screenshot field in data. Available fields:', Object.keys(data));
             }
           }
-          // V3 format
+          // Fallback: Direct screenshot field
+          else if (typeof response.screenshot === 'string') {
+            homepageScreenshot = response.screenshot;
+            console.log('[Screenshot] ✓ Captured successfully with Firecrawl V1 (direct screenshot)');
+            console.log('[Screenshot] Screenshot URL:', homepageScreenshot.substring(0, 100) + '...');
+          }
+          // V0/legacy format check
           else if (response.success && response.data && typeof response.data === 'object') {
             const data = response.data as Record<string, unknown>;
             if (typeof data.screenshot === 'string') {
               homepageScreenshot = data.screenshot;
-              console.log('[Screenshot] ✓ Captured successfully with Firecrawl (V3 format)');
+              console.log('[Screenshot] ✓ Captured successfully with Firecrawl (legacy format)');
             } else {
-              console.log('[Screenshot] V3 data exists but no screenshot field:', Object.keys(data));
+              console.log('[Screenshot] ✗ Legacy format but no screenshot. Available fields:', Object.keys(data));
             }
-          }
-          // Direct format
-          else if (typeof response.screenshot === 'string') {
-            homepageScreenshot = response.screenshot;
-            console.log('[Screenshot] ✓ Captured successfully with Firecrawl (direct format)');
           } else {
-            console.log('[Screenshot] Response structure unknown, keys:', Object.keys(response));
+            console.log('[Screenshot] ✗ Unexpected response structure. Top-level keys:', Object.keys(response));
           }
         }
       } catch (screenshotError) {
