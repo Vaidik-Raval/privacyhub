@@ -52,7 +52,8 @@ function getAllKeys(env?: Record<string, string | undefined>): Array<{ name: str
     if (first) availableKeys.push(first);
   }
 
-  console.log(`[KeyManager] Daily rotation: Day ${rotationDay} of 3-day cycle, primary: ${availableKeys[0]?.name}`);
+  console.log(`[KeyManager] Daily rotation: Day ${rotationDay} of 3-day cycle, primary: ${availableKeys[0]?.name}, fallbacks: [${availableKeys.slice(1).map(k => k.name).join(', ')}]`);
+  console.log(`[KeyManager] Total keys configured: ${availableKeys.length}`);
 
   return availableKeys;
 }

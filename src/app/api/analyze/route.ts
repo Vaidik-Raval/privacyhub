@@ -28,7 +28,7 @@ async function getOpenAIClient(env?: Record<string, string | undefined>) {
     throw new Error('No OpenRouter API keys available');
   }
 
-  console.log(`[OpenRouter] Using ${keyInfo.name} API key`);
+  console.log(`[OpenRouter] Using ${keyInfo.name} API key (daily rotation active)`);
 
   return {
     client: new OpenAI({
@@ -37,6 +37,8 @@ async function getOpenAIClient(env?: Record<string, string | undefined>) {
       defaultHeaders: {
         "HTTP-Referer": "https://privacyhub.in",
         "X-Title": "PrivacyHub - Privacy Policy Analyzer",
+        "X-Site-Url": "https://privacyhub.in",
+        "X-App-Name": "PrivacyHub",
       },
     }),
     keyName: keyInfo.name,
