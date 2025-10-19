@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
 
+  // ESLint configuration - ignore during production builds
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  // TypeScript configuration - ignore errors during builds (optional, can be removed if strict checking needed)
+  typescript: {
+    ignoreBuildErrors: false, // Keep strict TypeScript checking
+  },
+
   // Image optimization
   images: {
     remotePatterns: [

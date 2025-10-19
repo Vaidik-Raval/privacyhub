@@ -102,10 +102,28 @@ function getRelativeTime(timestamp: number): string {
   return `${Math.floor(seconds / 86400)} days ago`;
 }
 
+interface KeyStatusDisplay {
+  name: string;
+  isAvailable: boolean;
+  credits?: number;
+  rateLimitRemaining?: number;
+  lastCheckedRelative: string;
+  error?: string;
+}
+
+interface StatsDisplay {
+  totalKeys: number;
+  availableKeys: number;
+  totalCredits: number;
+  totalRateLimitRemaining: number;
+  overallHealth: string;
+  timestamp: string;
+}
+
 /**
  * Generate HTML status page
  */
-function generateStatusPageHTML(keys: any[], stats: any): string {
+function generateStatusPageHTML(keys: KeyStatusDisplay[], stats: StatsDisplay): string {
   const statusColor = stats.overallHealth === 'operational' ? '#10b981' :
                       stats.overallHealth === 'degraded' ? '#f59e0b' : '#ef4444';
   const statusIcon = stats.overallHealth === 'operational' ? '✓' :
