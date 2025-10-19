@@ -94,19 +94,44 @@ async function scrapeWithFetch(url: string): Promise<string> {
   }
 }
 
-// Crawlee PlaywrightCrawler fallback scraper (may not work on Vercel)
+// Crawlee PlaywrightCrawler fallback scraper with anti-blocking features
 async function scrapeWithCrawlee(url: string): Promise<string> {
   let extractedContent = '';
+  let lastError: Error | null = null;
 
   try {
     const crawler = new PlaywrightCrawler({
-      // Limit to single request
+      // Limit to single request for privacy policy extraction
       maxRequestsPerCrawl: 1,
 
       // Headless mode for production
       headless: true,
 
-      // Browser launch options for Vercel compatibility and anti-detection
+      // Navigation timeout (30 seconds)
+      navigationTimeoutSecs: 30,
+
+      // Browser pool configuration with anti-blocking fingerprints
+      browserPoolOptions: {
+        // Enable browser fingerprinting (enabled by default, but explicit for clarity)
+        useFingerprints: true,
+        // Configure fingerprint generation for maximum stealth
+        fingerprintOptions: {
+          fingerprintGeneratorOptions: {
+            // Emulate recent Chrome on Windows desktop
+            browsers: [
+              {
+                name: 'chrome' as const,
+                minVersion: 120,
+              },
+            ],
+            devices: ['desktop' as const],
+            operatingSystems: ['windows' as const],
+            locales: ['en-US', 'en'],
+          },
+        },
+      },
+
+      // Browser launch options for Vercel compatibility
       launchContext: {
         launchOptions: {
           args: [
@@ -114,108 +139,105 @@ async function scrapeWithCrawlee(url: string): Promise<string> {
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
             '--disable-gpu',
-            '--disable-blink-features=AutomationControlled',
-            '--disable-features=IsolateOrigins,site-per-process',
           ],
         },
       },
 
-      // Pre-navigation hook to set realistic headers and user agent
-      preNavigationHooks: [
-        async ({ page }) => {
-          // Set realistic user agent
-          await page.setExtraHTTPHeaders({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'DNT': '1',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
-            'Sec-Fetch-User': '?1',
-            'Cache-Control': 'max-age=0',
-          });
+      // Session pool for better request management
+      sessionPoolOptions: {
+        maxPoolSize: 1, // Single session for single request
+        sessionOptions: {
+          maxUsageCount: 1,
+        },
+      },
 
-          // Hide automation indicators
-          await page.evaluateOnNewDocument(() => {
-            // Overwrite the navigator.webdriver property
-            Object.defineProperty(navigator, 'webdriver', {
-              get: () => undefined,
-            });
-
-            // Mock plugins
-            Object.defineProperty(navigator, 'plugins', {
-              get: () => [1, 2, 3, 4, 5],
-            });
-
-            // Mock languages
-            Object.defineProperty(navigator, 'languages', {
-              get: () => ['en-US', 'en'],
-            });
-          });
+      // Post-navigation hook to wait for dynamic content
+      postNavigationHooks: [
+        async ({ page, log }) => {
+          log.info('Waiting for page content to load...');
+          // Wait for network to be mostly idle
+          try {
+            await page.waitForLoadState('domcontentloaded', { timeout: 10000 });
+            // Additional wait for dynamic content
+            await page.waitForTimeout(2000);
+          } catch (waitError) {
+            log.warning('Timeout waiting for page load state, proceeding anyway');
+          }
         },
       ],
 
-      // Request handler
-      async requestHandler({ page, request }) {
-        console.log(`Crawling: ${request.url}`);
+      // Request handler - Crawlee automatically manages browser lifecycle
+      async requestHandler({ page, request, log }) {
+        log.info(`Extracting content from: ${request.loadedUrl}`);
 
-        // Wait for page to load
-        await page.waitForLoadState('domcontentloaded');
+        // Extract main content text using Playwright's page.evaluate
+        try {
+          extractedContent = await page.evaluate(() => {
+            // Remove unnecessary elements
+            const elementsToRemove = document.querySelectorAll(
+              'script, style, nav, header, footer, aside, [role="navigation"], [role="banner"], [role="complementary"], .advertisement, .ads'
+            );
+            elementsToRemove.forEach(el => el.remove());
 
-        // Wait a bit for dynamic content
-        await page.waitForTimeout(2000);
+            // Try to find main content areas in order of priority
+            const selectors = [
+              'main',
+              '[role="main"]',
+              '.main-content',
+              '#main-content',
+              '.content',
+              '#content',
+              '.privacy-policy',
+              '.policy-content',
+              'article',
+              '.article-content',
+              '.post-content',
+              '.entry-content',
+              '.page-content',
+              '.container',
+              'body'
+            ];
 
-        // Extract main content text
-        extractedContent = await page.evaluate(() => {
-          // Remove script and style elements
-          const elementsToRemove = document.querySelectorAll('script, style, nav, header, footer, aside, [role="navigation"], [role="banner"], [role="complementary"]');
-          elementsToRemove.forEach(el => el.remove());
-
-          // Try to find main content areas
-          const selectors = [
-            'main',
-            '[role="main"]',
-            '.main-content',
-            '#main-content',
-            '.content',
-            '#content',
-            '.privacy-policy',
-            '.policy-content',
-            'article',
-            '.article-content',
-            '.post-content',
-            '.entry-content',
-            '.container',
-            'body'
-          ];
-
-          for (const selector of selectors) {
-            const element = document.querySelector(selector);
-            if (element && element.textContent && element.textContent.trim().length > 500) {
-              return element.textContent.trim();
+            for (const selector of selectors) {
+              const element = document.querySelector(selector);
+              if (element && element.textContent && element.textContent.trim().length > 500) {
+                return element.textContent.trim();
+              }
             }
-          }
 
-          // Fallback to body text
-          return document.body.textContent?.trim() || '';
-        });
+            // Fallback to body text
+            return document.body.textContent?.trim() || '';
+          });
+
+          log.info(`Content extracted successfully, length: ${extractedContent.length}`);
+        } catch (evalError) {
+          log.error('Failed to extract content from page:', evalError);
+          throw evalError;
+        }
       },
 
-      // Error handler
-      failedRequestHandler({ request }) {
-        console.error(`Request ${request.url} failed multiple times`);
+      // Error handler for failed requests
+      failedRequestHandler({ request, log }, error) {
+        log.error(`Request ${request.url} failed after retries:`, error);
+        lastError = error instanceof Error ? error : new Error(String(error));
       },
+
+      // Maximum retries for failed requests
+      maxRequestRetries: 2,
+
+      // Request timeout
+      requestHandlerTimeoutSecs: 60,
     });
 
     // Run the crawler on the URL
     await crawler.run([url]);
 
-    // Clean up
+    // Clean up browser resources
     await crawler.teardown();
+
+    if (!extractedContent && lastError) {
+      throw lastError;
+    }
 
     return extractedContent;
   } catch (error) {
