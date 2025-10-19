@@ -400,6 +400,12 @@ export async function POST(request: NextRequest) {
 
     let content = '';
     let scraperUsed = 'unknown';
+    let homepageScreenshot: string | null = null;
+
+    // Extract homepage URL from the privacy policy URL
+    const urlObj = new URL(sanitizedUrl);
+    const homepageUrl = `${urlObj.protocol}//${urlObj.hostname}`;
+    console.log('Homepage URL for screenshot:', homepageUrl);
 
     // Try Firecrawl first (if API key is available)
     if (process.env.FIRECRAWL_API_KEY) {
@@ -560,9 +566,66 @@ export async function POST(request: NextRequest) {
     );
 
     if (!hasPrivacyContent) {
-      return NextResponse.json({ 
-        error: 'The extracted content does not appear to be a privacy policy. Please provide a direct link to a privacy policy page.' 
+      return NextResponse.json({
+        error: 'The extracted content does not appear to be a privacy policy. Please provide a direct link to a privacy policy page.'
       }, { status: 400 });
+    }
+
+    // Capture homepage screenshot using Firecrawl (non-blocking, best effort)
+    if (process.env.FIRECRAWL_API_KEY) {
+      try {
+        console.log('Attempting to capture homepage screenshot...');
+        const firecrawl = getFirecrawlClient();
+
+        const screenshotResult = await (firecrawl as unknown as {
+          scrape: (params: {
+            url: string;
+            formats: string[];
+            onlyMainContent?: boolean;
+            waitFor?: number;
+            timeout?: number;
+            mobile?: boolean;
+          }) => Promise<unknown>
+        }).scrape({
+          url: homepageUrl,
+          formats: ['screenshot@fullPage'], // Full page screenshot
+          onlyMainContent: false,
+          waitFor: 2000,
+          timeout: 15000, // Shorter timeout for screenshot
+          mobile: false, // Desktop screenshot
+        });
+
+        // Extract screenshot URL from response
+        if (screenshotResult) {
+          const response = screenshotResult as Record<string, unknown>;
+
+          // V4 format
+          if (response.data && typeof response.data === 'object') {
+            const data = response.data as Record<string, unknown>;
+            if (typeof data.screenshot === 'string') {
+              homepageScreenshot = data.screenshot;
+              console.log('Homepage screenshot captured successfully');
+            }
+          }
+          // V3 format
+          else if (response.success && response.data && typeof response.data === 'object') {
+            const data = response.data as Record<string, unknown>;
+            if (typeof data.screenshot === 'string') {
+              homepageScreenshot = data.screenshot;
+              console.log('Homepage screenshot captured successfully');
+            }
+          }
+          // Direct format
+          else if (typeof response.screenshot === 'string') {
+            homepageScreenshot = response.screenshot;
+            console.log('Homepage screenshot captured successfully');
+          }
+        }
+      } catch (screenshotError) {
+        // Non-blocking: Log error but continue with analysis
+        const errorMsg = screenshotError instanceof Error ? screenshotError.message : String(screenshotError);
+        console.warn('Failed to capture homepage screenshot (non-critical):', errorMsg);
+      }
     }
 
     // Firebase/Firestore caching disabled for MVP
@@ -733,6 +796,8 @@ export async function POST(request: NextRequest) {
     // Add metadata
     const result = {
       url: sanitizedUrl,
+      homepage_url: homepageUrl,
+      homepage_screenshot: homepageScreenshot,
       timestamp: new Date().toISOString(),
       content_length: content.length,
       scraper_used: scraperUsed,

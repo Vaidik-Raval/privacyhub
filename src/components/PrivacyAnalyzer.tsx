@@ -10,11 +10,14 @@ import { Heatmap } from '@/components/ui/heatmap';
 import { ScoreCard } from '@/components/ui/score-card';
 import { MethodologySection } from '@/components/MethodologySection';
 import { ShareButtons } from '@/components/ShareButtons';
+import { WebsiteScreenshot } from '@/components/WebsiteScreenshot';
 import { AlertCircle, CheckCircle, Search, ExternalLink, Shield, Lock, Eye, Users, FileText, Scale, Home, RotateCcw, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
 interface AnalysisResult {
   url: string;
+  homepage_url?: string;
+  homepage_screenshot?: string | null;
   timestamp: string;
   analysis: {
     overall_score: number;
@@ -548,6 +551,15 @@ export default function PrivacyAnalyzer() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Website Screenshot */}
+          {result.homepage_screenshot && result.homepage_url && (
+            <WebsiteScreenshot
+              screenshotUrl={result.homepage_screenshot}
+              homepageUrl={result.homepage_url}
+              domain={new URL(result.url).hostname}
+            />
+          )}
 
           {/* Important Disclaimer - Prominent Position */}
           <Card className="border-2 border-amber-300 bg-gradient-to-br from-amber-50 to-orange-50 shadow-lg">
