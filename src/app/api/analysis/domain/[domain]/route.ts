@@ -4,7 +4,7 @@ import type { CloudflareRequest } from '@/types/cloudflare';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { domain: string } }
+  { params }: { params: Promise<{ domain: string }> }
 ) {
   try {
     // Get D1 database binding from Cloudflare Workers environment
@@ -23,7 +23,9 @@ export async function GET(
       console.warn('[D1 Init] Database initialization failed (non-critical):', err);
     });
 
-    const domain = decodeURIComponent(params.domain);
+    // Await params (Next.js 15 async params)
+    const resolvedParams = await params;
+    const domain = decodeURIComponent(resolvedParams.domain);
     const analysis = await getAnalysisByDomain(db, domain);
 
     if (!analysis) {
