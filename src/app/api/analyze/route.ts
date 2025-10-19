@@ -610,7 +610,7 @@ export async function POST(request: NextRequest) {
           }) => Promise<unknown>
         }).scrape({
           url: homepageUrl,
-          formats: ['screenshot@fullPage'], // Full page screenshot
+          formats: ['screenshot'], // Screenshot format
           onlyMainContent: false,
           waitFor: 2000,
           timeout: 15000, // Shorter timeout for screenshot
@@ -620,13 +620,16 @@ export async function POST(request: NextRequest) {
         // Extract screenshot URL from response
         if (screenshotResult) {
           const response = screenshotResult as Record<string, unknown>;
+          console.log('[Screenshot] Firecrawl response structure:', JSON.stringify(response, null, 2).substring(0, 500));
 
           // V4 format
           if (response.data && typeof response.data === 'object') {
             const data = response.data as Record<string, unknown>;
             if (typeof data.screenshot === 'string') {
               homepageScreenshot = data.screenshot;
-              console.log('Homepage screenshot captured successfully with Firecrawl');
+              console.log('[Screenshot] ✓ Captured successfully with Firecrawl (V4 format)');
+            } else {
+              console.log('[Screenshot] V4 data exists but no screenshot field:', Object.keys(data));
             }
           }
           // V3 format
@@ -634,36 +637,52 @@ export async function POST(request: NextRequest) {
             const data = response.data as Record<string, unknown>;
             if (typeof data.screenshot === 'string') {
               homepageScreenshot = data.screenshot;
-              console.log('Homepage screenshot captured successfully with Firecrawl');
+              console.log('[Screenshot] ✓ Captured successfully with Firecrawl (V3 format)');
+            } else {
+              console.log('[Screenshot] V3 data exists but no screenshot field:', Object.keys(data));
             }
           }
           // Direct format
           else if (typeof response.screenshot === 'string') {
             homepageScreenshot = response.screenshot;
-            console.log('Homepage screenshot captured successfully with Firecrawl');
+            console.log('[Screenshot] ✓ Captured successfully with Firecrawl (direct format)');
+          } else {
+            console.log('[Screenshot] Response structure unknown, keys:', Object.keys(response));
           }
         }
       } catch (screenshotError) {
         // Non-blocking: Log error but continue with analysis
         const errorMsg = screenshotError instanceof Error ? screenshotError.message : String(screenshotError);
-        console.warn('Firecrawl screenshot failed, will try Crawlee fallback:', errorMsg);
+        console.warn('[Screenshot] ✗ Firecrawl screenshot failed, will try Crawlee fallback:', errorMsg);
       }
+    } else {
+      console.log('[Screenshot] FIRECRAWL_API_KEY not available, skipping Firecrawl screenshot attempt');
     }
 
     // Fallback to Crawlee for screenshot if Firecrawl failed or not available
     if (!homepageScreenshot) {
       try {
-        console.log('Attempting to capture homepage screenshot with Crawlee...');
+        console.log('[Screenshot] Attempting to capture homepage screenshot with Crawlee...');
         const crawleeResult = await scrapeWithCrawlee(homepageUrl, true);
         if (crawleeResult.screenshot) {
           homepageScreenshot = crawleeResult.screenshot;
-          console.log('Homepage screenshot captured successfully with Crawlee');
+          console.log('[Screenshot] ✓ Captured successfully with Crawlee');
+          console.log('[Screenshot] Screenshot format:', crawleeResult.screenshot.substring(0, 50) + '...');
+        } else {
+          console.log('[Screenshot] ✗ Crawlee returned no screenshot');
         }
       } catch (screenshotError) {
         // Non-blocking: Log error but continue with analysis
         const errorMsg = screenshotError instanceof Error ? screenshotError.message : String(screenshotError);
-        console.warn('Failed to capture homepage screenshot with Crawlee (non-critical):', errorMsg);
+        console.warn('[Screenshot] ✗ Failed to capture homepage screenshot with Crawlee (non-critical):', errorMsg);
       }
+    }
+
+    // Final screenshot status
+    if (homepageScreenshot) {
+      console.log('[Screenshot] ✓ Screenshot ready for response (length:', homepageScreenshot.length, ')');
+    } else {
+      console.log('[Screenshot] ⚠ No screenshot available - will display N/A in UI');
     }
 
     // Firebase/Firestore caching disabled for MVP
