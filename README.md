@@ -181,7 +181,7 @@ PrivacyHub uses a scientifically-grounded, evidence-based framework for privacy 
   - Firecrawl API (primary)
   - Crawlee PlaywrightCrawler (fallback)
   - Native fetch API (final fallback)
-- **Database**: Currently disabled (Firebase/Firestore ready for future use)
+- **Database**: SQLite (better-sqlite3) for local analysis storage
 
 ### Infrastructure
 - **Hosting**: Vercel (recommended) or self-hosted
@@ -232,9 +232,6 @@ PrivacyHub uses a scientifically-grounded, evidence-based framework for privacy 
 
    # Optional - Firecrawl API for better web scraping
    FIRECRAWL_API_KEY=your_firecrawl_api_key_here
-
-   # Note: Firebase/Firestore integration currently disabled
-   # Uncomment and configure if you want to enable caching
    ```
 
 4. **Run development server**
@@ -264,7 +261,6 @@ See `.env.example` for a comprehensive list of available environment variables w
 
 **Optional:**
 - `FIRECRAWL_API_KEY`: Firecrawl API key for enhanced scraping
-- Firebase credentials (if enabling Firestore caching)
 
 ---
 
@@ -486,7 +482,7 @@ pm2 start npm --name "privacyhub" -- start
 - [x] Navigation improvements (Home, Reset buttons)
 - [x] DPDP Act 2023 integration
 - [x] Enhanced error handling
-- [ ] Database/caching re-enablement (optional)
+- [x] SQLite local database integration
 
 ### Version 1.2 (Q1 2025)
 - [ ] Multi-language support (Hindi, Spanish, French)

@@ -6,45 +6,11 @@
 
 Configure these in Vercel Dashboard → Settings → Environment Variables:
 
-#### Firebase Configuration (Public - Safe)
-- `NEXT_PUBLIC_FIREBASE_API_KEY` - ✅ Public
-- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` - ✅ Public
-- `NEXT_PUBLIC_FIREBASE_PROJECT_ID` - ✅ Public
-- `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` - ✅ Public
-- `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` - ✅ Public
-- `NEXT_PUBLIC_FIREBASE_APP_ID` - ✅ Public
-
-#### Firebase Admin SDK (Sensitive - Mark as Secret)
-- `FIREBASE_PROJECT_ID` - 🔒 Sensitive
-- `FIREBASE_CLIENT_EMAIL` - 🔒 Sensitive
-- `FIREBASE_PRIVATE_KEY` - 🔒 **HIGHLY SENSITIVE** (toggle "Sensitive" in Vercel)
-
 #### API Keys (Sensitive - Mark as Secret)
 - `OPENROUTER_API` - 🔒 **HIGHLY SENSITIVE**
-- `FIRECRAWL_API_KEY` - 🔒 **HIGHLY SENSITIVE**
+- `FIRECRAWL_API_KEY` - 🔒 **HIGHLY SENSITIVE** (optional, but recommended)
 
-### 2. Firebase Firestore Setup
-
-#### Deploy Firestore Security Rules
-```bash
-firebase deploy --only firestore:rules
-```
-
-Security rules location: `firestore.rules`
-- Public read access to analyses collection
-- Server-only write access (Admin SDK)
-
-#### Deploy Firestore Indexes
-```bash
-firebase deploy --only firestore:indexes
-```
-
-Indexes location: `firestore.indexes.json`
-- `updated_at DESC` (for recent analyses)
-- `last_checked_at DESC` (for sorting)
-- Composite indexes for filtering + sorting
-
-### 3. Security Headers
+### 2. Security Headers
 
 Security headers are configured in `src/middleware.ts`:
 - ✅ HSTS (Strict-Transport-Security)
@@ -54,7 +20,7 @@ Security headers are configured in `src/middleware.ts`:
 - ✅ Content-Security-Policy
 - ✅ Permissions-Policy
 
-### 4. Rate Limiting Configuration
+### 3. Rate Limiting Configuration
 
 Current limits (configured in `src/lib/rate-limiter.ts`):
 - **Analysis API**: 5 requests per 15 minutes per IP
@@ -66,7 +32,7 @@ To adjust limits, edit `src/lib/rate-limiter.ts`:
 export const analysisRateLimiter = new RateLimiter(5, 15); // requests, minutes
 ```
 
-### 5. Input Validation
+### 4. Input Validation
 
 All user inputs are validated and sanitized:
 - ✅ URL validation (prevents SSRF attacks)
@@ -77,11 +43,11 @@ All user inputs are validated and sanitized:
 - ✅ SQL injection prevention
 - ✅ XSS prevention
 
-### 6. Performance Optimizations
+### 5. Performance Optimizations
 
 #### Caching Strategy
 - **In-memory cache**: 60 seconds for history API
-- **Firestore cache**: 30 days for analysis results
+- **SQLite database**: Local storage for analysis results
 - **Image cache**: 60 seconds minimum TTL
 - **Static assets**: 1 year max-age
 
@@ -97,7 +63,7 @@ All user inputs are validated and sanitized:
 - Package import optimization (lucide-react, shadcn/ui)
 - Static asset caching (1 year)
 
-### 7. Error Handling
+### 6. Error Handling
 
 Production-grade error handling:
 - ✅ Retry logic with exponential backoff
@@ -106,12 +72,11 @@ Production-grade error handling:
 - ✅ Safe error messages (no sensitive data exposure)
 - ✅ Comprehensive logging
 
-### 8. Monitoring Setup
+### 7. Monitoring Setup
 
 Add these monitoring services (recommended):
 - **Sentry**: Error tracking and performance monitoring
 - **Vercel Analytics**: Traffic and performance metrics
-- **Firebase Console**: Firestore usage and costs
 - **OpenRouter Dashboard**: API usage and costs
 
 ## Deployment Steps
@@ -147,9 +112,8 @@ Or use GitHub integration:
 1. Visit homepage
 2. Submit a privacy policy URL
 3. Verify analysis completes
-4. Check Firestore for saved data
-5. Verify logo displays correctly
-6. Test caching (re-analyze same URL)
+4. Verify logo displays correctly
+5. Check SQLite database for saved data
 
 #### Test Rate Limiting
 1. Make 6 requests quickly
@@ -172,14 +136,6 @@ Verify headers:
 3. Submit non-privacy-policy URL
 4. Verify user-friendly error messages
 
-### 4. Firebase Console Setup
-
-1. Go to Firebase Console → Firestore
-2. Verify security rules are active
-3. Check indexes are deployed
-4. Set up backups (recommended)
-5. Monitor usage and set budget alerts
-
 ## Performance Benchmarks
 
 Target metrics:
@@ -195,11 +151,6 @@ Monitor with:
 - Chrome DevTools Lighthouse
 
 ## Cost Optimization
-
-### Firestore
-- Free tier: 50K reads/day, 20K writes/day
-- Enable caching to reduce reads
-- Use 30-day re-analysis window to minimize writes
 
 ### Firecrawl
 - Monitor API usage in Firecrawl dashboard
@@ -226,14 +177,12 @@ npm install next@latest
 ```
 
 ### API Key Rotation
-- Rotate Firebase private key every 90 days
 - Rotate OpenRouter API key every 90 days
 - Rotate Firecrawl API key every 90 days
 
 ### Backup Strategy
-- Firestore automatic backups (enable in console)
 - Export SQLite database weekly
-- Store backups in secure location (Google Cloud Storage)
+- Store backups in secure location (cloud storage recommended)
 
 ## Rollback Plan
 
@@ -246,20 +195,16 @@ If deployment fails:
 2. Or use Vercel Dashboard:
    - Deployments → Select previous deployment → Promote to Production
 
-3. Check Firestore state:
-   - Verify no corrupt data
-   - Restore from backup if needed
+3. Restore SQLite database from backup if needed
 
 ## Support Contacts
 
 - **Vercel Support**: https://vercel.com/support
-- **Firebase Support**: https://firebase.google.com/support
 - **OpenRouter Support**: https://openrouter.ai/
 - **Firecrawl Support**: https://www.firecrawl.dev/
 
 ## Additional Resources
 
 - [Next.js Production Checklist](https://nextjs.org/docs/going-to-production)
-- [Firebase Security Rules](https://firebase.google.com/docs/rules)
 - [Vercel Environment Variables](https://vercel.com/docs/environment-variables)
 - [OWASP Security Guidelines](https://owasp.org/www-project-web-security-testing-guide/)

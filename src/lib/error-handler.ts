@@ -82,14 +82,6 @@ class ErrorHandler {
           status: 503
         };
       }
-
-      if (error.message.includes('Firebase') || error.message.includes('Firestore')) {
-        this.log('Firebase error encountered', ErrorSeverity.HIGH, error);
-        return {
-          message: 'Database error. Please try again later.',
-          status: 500
-        };
-      }
     }
 
     // Default error

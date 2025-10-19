@@ -2,18 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import FirecrawlApp from '@mendable/firecrawl-js';
 import { PlaywrightCrawler } from '@crawlee/playwright';
-// Firebase/Firestore disabled - keeping code for future use
-// import { saveAnalysis as saveSQLiteAnalysis } from '@/lib/database';
-// import {
-//   extractDomain,
-//   generateContentHash,
-//   checkExistingAnalysis,
-//   saveAnalysis as saveFirestoreAnalysis,
-//   updateLastChecked
-// } from '@/lib/firestore-service';
-// import { getOptimizedLogo } from '@/lib/logo-service';
-// import { errorHandler, ErrorSeverity } from '@/lib/error-handler';
-// import { analysisRateLimiter, getClientIp, createRateLimitHeaders } from '@/lib/rate-limiter';
 import { validateUrl } from '@/lib/input-validation';
 import { getBestAvailableKey, markKeyAsFailed } from '@/lib/openrouter-key-manager';
 
@@ -684,34 +672,6 @@ export async function POST(request: NextRequest) {
     } else {
       console.log('[Screenshot] ⚠ No screenshot available - will display N/A in UI');
     }
-
-    // Firebase/Firestore caching disabled for MVP
-    // const domain = extractDomain(sanitizedUrl);
-    // const contentHash = generateContentHash(content);
-    //
-    // console.log('Domain extracted:', domain);
-    // console.log('Content hash generated:', contentHash);
-    //
-    // // Check if we have a recent analysis
-    // const existingCheck = await checkExistingAnalysis(domain, contentHash);
-    //
-    // if (existingCheck.exists && !existingCheck.needsUpdate) {
-    //   console.log('Returning cached analysis (no changes detected, within 30 days)');
-    //   await updateLastChecked(domain);
-    //
-    //   return NextResponse.json({
-    //     url: sanitizedUrl,
-    //     domain,
-    //     cached: true,
-    //     timestamp: new Date().toISOString(),
-    //     analysis: existingCheck.data,
-    //     message: 'Using cached analysis - no changes detected'
-    //   });
-    // }
-    //
-    // if (existingCheck.exists && existingCheck.needsUpdate) {
-    //   console.log('Content has changed or expired, re-analyzing...');
-    // }
 
     console.log('Analyzing privacy policy with AI...');
     console.log('[Analysis] Starting analysis with automatic key rotation and fallback');

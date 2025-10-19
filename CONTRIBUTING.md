@@ -109,9 +109,8 @@ Help us improve our documentation:
 
 - Node.js 18+ and npm
 - Git
-- Firebase account (for Firestore)
 - OpenRouter API key
-- Firecrawl API key (optional)
+- Firecrawl API key (optional, but recommended)
 
 ### Local Development
 
@@ -346,9 +345,9 @@ Fixes #456
 ```bash
 docs(readme): update installation instructions
 
-- Add Firebase setup steps
 - Clarify environment variables
 - Add troubleshooting section
+- Update deployment guide
 ```
 
 ---
