@@ -219,7 +219,8 @@ async function scrapeWithCrawlee(url: string): Promise<string> {
 
       // Error handler for failed requests
       failedRequestHandler({ request, log }, error) {
-        log.error(`Request ${request.url} failed after retries:`, error);
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        log.error(`Request ${request.url} failed after retries: ${errorMsg}`);
         lastError = error instanceof Error ? error : new Error(String(error));
       },
 
