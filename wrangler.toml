@@ -1,17 +1,17 @@
-# Cloudflare Pages Configuration for PrivacyHub (Next.js)
+# Cloudflare Workers Configuration for PrivacyHub
 name = "privacyhub"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = ".next"
+compatibility_flags = ["nodejs_compat"]
 
-# D1 Database binding for Pages Functions
+# D1 Database binding
 [[d1_databases]]
 binding = "an-db"
 database_name = "privacyhub"
 database_id = "b64e7663-7a31-4e38-a210-4c570dabd118"
 
-# Compatibility flags
-compatibility_flags = ["nodejs_compat"]
-
-# Environment variables (set in Cloudflare Pages dashboard)
-# OPENROUTER_API = <your-key>
-# FIRECRAWL_API_KEY = <your-key>
+# Environment variables (set in Cloudflare Workers dashboard)
+# Secrets configured via dashboard:
+# - FIRECRAWL_API_KEY
+# - OPENROUTER_API
+# - OPENROUTER_API_1
+# - OPENROUTER_API_2
