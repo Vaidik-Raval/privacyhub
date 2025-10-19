@@ -84,15 +84,46 @@ export default function PrivacyAnalyzer() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        // Include debug details if available
-        let errorMsg = errorData.error || 'Analysis failed';
-        if (errorData.details) {
-          errorMsg += `\n\nDetails: ${errorData.details}`;
+        let errorMsg = 'Analysis failed. Please try again.';
+
+        try {
+          const contentType = response.headers.get('content-type');
+
+          if (contentType?.includes('application/json')) {
+            const errorData = await response.json();
+            errorMsg = errorData.error || 'Analysis failed';
+
+            // Include debug details if available
+            if (errorData.details) {
+              errorMsg += `\n\nDetails: ${errorData.details}`;
+            }
+            if (errorData.debugInfo) {
+              errorMsg += `\n\nDebug: ${JSON.stringify(errorData.debugInfo)}`;
+            }
+          } else {
+            // HTML error page or other non-JSON response
+            const text = await response.text();
+
+            // Check if it's a Vercel error page or similar
+            if (text.includes('<!DOCTYPE') || text.includes('<html')) {
+              if (response.status === 504 || text.includes('504') || text.includes('timeout')) {
+                errorMsg = 'The website took too long to respond. This might be due to bot protection or the site being temporarily unavailable. Please try again later.';
+              } else if (response.status === 502 || text.includes('502') || text.includes('Bad Gateway')) {
+                errorMsg = 'Unable to process this website. The site may have bot protection or be temporarily unavailable.';
+              } else if (response.status === 500) {
+                errorMsg = 'Server error occurred while analyzing this website. Please try a different URL or try again later.';
+              } else {
+                errorMsg = 'Unable to analyze this website. The site may have anti-bot protection preventing automated access. Please try a different privacy policy URL.';
+              }
+            } else {
+              errorMsg = text.substring(0, 200); // Show first 200 chars of error
+            }
+          }
+        } catch (parseError) {
+          // If we can't parse the error at all
+          errorMsg = `Request failed with status ${response.status}. The website may be blocking automated access or experiencing issues. Please try again later.`;
         }
-        if (errorData.debugInfo) {
-          errorMsg += `\n\nDebug: ${JSON.stringify(errorData.debugInfo)}`;
-        }
+
         throw new Error(errorMsg);
       }
 

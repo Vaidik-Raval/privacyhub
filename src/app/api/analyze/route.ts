@@ -383,16 +383,41 @@ export async function POST(request: NextRequest) {
       try {
         const firecrawl = getFirecrawlClient();
 
-        // Try different API call formats for compatibility
+        // Try different API call formats for compatibility with enhanced anti-blocking
         let scrapeResult: unknown;
         try {
-          // V4 API format with optimized settings
-          scrapeResult = await (firecrawl as unknown as { scrape: (params: { url: string; formats: string[]; onlyMainContent: boolean; waitFor: number; timeout?: number }) => Promise<unknown> }).scrape({
+          // V4 API format with optimized anti-blocking settings
+          scrapeResult = await (firecrawl as unknown as {
+            scrape: (params: {
+              url: string;
+              formats: string[];
+              onlyMainContent: boolean;
+              waitFor: number;
+              timeout?: number;
+              headers?: Record<string, string>;
+              mobile?: boolean;
+            }) => Promise<unknown>
+          }).scrape({
             url: sanitizedUrl,
             formats: ['markdown'],
             onlyMainContent: true,
-            waitFor: 2000,
-            timeout: 30000, // 30 second timeout
+            waitFor: 3000, // Increased wait time for JavaScript-heavy sites
+            timeout: 45000, // Increased timeout for better success rate
+            // Custom headers to mimic real browser
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+              'Accept-Language': 'en-US,en;q=0.9',
+              'Accept-Encoding': 'gzip, deflate, br',
+              'DNT': '1',
+              'Upgrade-Insecure-Requests': '1',
+              'Sec-Fetch-Dest': 'document',
+              'Sec-Fetch-Mode': 'navigate',
+              'Sec-Fetch-Site': 'none',
+              'Sec-Fetch-User': '?1',
+            },
+            // Enable mobile emulation for sites that serve different content to mobile
+            mobile: false,
           });
         } catch {
           console.log('V4 format failed, trying V3 format');
@@ -437,7 +462,8 @@ export async function POST(request: NextRequest) {
         }
 
       } catch (firecrawlError) {
-        console.error('Firecrawl failed:', firecrawlError);
+        const errorMsg = firecrawlError instanceof Error ? firecrawlError.message : String(firecrawlError);
+        console.error('Firecrawl failed:', errorMsg);
         content = ''; // Reset content to trigger Crawlee fallback
       }
     } else {
@@ -458,7 +484,8 @@ export async function POST(request: NextRequest) {
         console.log('Content extracted successfully with Crawlee, length:', content.length);
 
       } catch (crawleeError) {
-        console.error('Crawlee fallback failed:', crawleeError);
+        const crawleeErrorMsg = crawleeError instanceof Error ? crawleeError.message : String(crawleeError);
+        console.error('Crawlee fallback failed:', crawleeErrorMsg);
 
         // Final fallback: simple fetch
         console.log('Falling back to simple fetch...');
@@ -468,16 +495,35 @@ export async function POST(request: NextRequest) {
 
           if (!content || content.length < 100) {
             return NextResponse.json({
-              error: 'Could not extract sufficient content from the URL. The page may be protected or use JavaScript rendering. Please try a different URL.'
+              error: 'Unable to extract content from this website. The site may have anti-bot protection or require JavaScript rendering that prevents automated access. Please try a different privacy policy URL or contact the website owner for access.',
+              details: 'All scraping methods (Firecrawl, Playwright, Fetch) failed to extract sufficient content.',
+              url: sanitizedUrl
             }, { status: 400 });
           }
 
           console.log('Content extracted successfully with fetch, length:', content.length);
         } catch (fetchError) {
-          console.error('All scraping methods failed:', fetchError);
+          const fetchErrorMsg = fetchError instanceof Error ? fetchError.message : String(fetchError);
+          console.error('All scraping methods failed:', fetchErrorMsg);
+
+          // Provide specific error messages based on error type
+          let userMessage = 'Unable to access this website. ';
+          if (fetchErrorMsg.includes('ENOTFOUND') || fetchErrorMsg.includes('ECONNREFUSED')) {
+            userMessage += 'The website could not be reached. Please verify the URL is correct and the site is online.';
+          } else if (fetchErrorMsg.includes('timeout') || fetchErrorMsg.includes('ETIMEDOUT')) {
+            userMessage += 'The website took too long to respond. It may be experiencing issues or has aggressive bot protection.';
+          } else if (fetchErrorMsg.includes('403') || fetchErrorMsg.includes('Forbidden')) {
+            userMessage += 'Access was denied by the website. This site has anti-bot protection that prevents automated access.';
+          } else if (fetchErrorMsg.includes('401')) {
+            userMessage += 'The website requires authentication. Please try a publicly accessible privacy policy URL.';
+          } else {
+            userMessage += 'The site may have strong bot protection or be temporarily unavailable. Please try again later or use a different privacy policy URL.';
+          }
 
           return NextResponse.json({
-            error: 'Failed to extract content from the URL. Please verify the URL is accessible and try again.'
+            error: userMessage,
+            details: 'Failed to extract content using all available methods (Firecrawl, Playwright browser automation, and direct fetch).',
+            url: sanitizedUrl
           }, { status: 400 });
         }
       }
