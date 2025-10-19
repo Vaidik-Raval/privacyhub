@@ -181,7 +181,6 @@ PrivacyHub uses a scientifically-grounded, evidence-based framework for privacy 
   - Firecrawl API (primary)
   - Crawlee PlaywrightCrawler (fallback)
   - Native fetch API (final fallback)
-- **Database**: SQLite (better-sqlite3) for local analysis storage
 
 ### Infrastructure
 - **Hosting**: Vercel (recommended) or self-hosted
@@ -482,7 +481,7 @@ pm2 start npm --name "privacyhub" -- start
 - [x] Navigation improvements (Home, Reset buttons)
 - [x] DPDP Act 2023 integration
 - [x] Enhanced error handling
-- [x] SQLite local database integration
+- [x] Stateless architecture (no database dependency)
 
 ### Version 1.2 (Q1 2025)
 - [ ] Multi-language support (Hindi, Spanish, French)

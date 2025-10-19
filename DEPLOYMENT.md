@@ -46,8 +46,7 @@ All user inputs are validated and sanitized:
 ### 5. Performance Optimizations
 
 #### Caching Strategy
-- **In-memory cache**: 60 seconds for history API
-- **SQLite database**: Local storage for analysis results
+- **In-memory cache**: 60 seconds for API responses
 - **Image cache**: 60 seconds minimum TTL
 - **Static assets**: 1 year max-age
 
@@ -112,8 +111,8 @@ Or use GitHub integration:
 1. Visit homepage
 2. Submit a privacy policy URL
 3. Verify analysis completes
-4. Verify logo displays correctly
-5. Check SQLite database for saved data
+4. Verify results display correctly with all categories
+5. Test sharing functionality
 
 #### Test Rate Limiting
 1. Make 6 requests quickly
@@ -181,8 +180,8 @@ npm install next@latest
 - Rotate Firecrawl API key every 90 days
 
 ### Backup Strategy
-- Export SQLite database weekly
-- Store backups in secure location (cloud storage recommended)
+- Regular code backups via Git
+- Monitor API usage and logs
 
 ## Rollback Plan
 
@@ -194,8 +193,6 @@ If deployment fails:
 
 2. Or use Vercel Dashboard:
    - Deployments → Select previous deployment → Promote to Production
-
-3. Restore SQLite database from backup if needed
 
 ## Support Contacts
 
