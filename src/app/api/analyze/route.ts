@@ -762,11 +762,16 @@ export async function POST(request: NextRequest) {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       let currentKeyName = '';
       try {
-        const { client: openai, keyName } = await getOpenAIClient(env);
+        const openaiResult = await getOpenAIClient(env);
+        if (!openaiResult) {
+          throw new Error('No OpenRouter API keys available. Please configure OPENROUTER_API, OPENROUTER_API_1, or OPENROUTER_API_2 environment variables.');
+        }
+        const { client: openai, keyName } = openaiResult;
         currentKeyName = keyName;
 
         console.log(`[Analysis] Using ${keyName} for AI analysis (attempt ${attempt + 1}/${maxRetries})`);
         console.log(`[OpenRouter] Sending request to model: deepseek/deepseek-chat-v3.1:free`);
+        console.log(`[OpenRouter] Request params: temperature=0.3, max_tokens=4000, content_length=${content.length}`);
 
         const completion = await openai.chat.completions.create({
           model: "deepseek/deepseek-chat-v3.1:free",
@@ -782,6 +787,16 @@ export async function POST(request: NextRequest) {
           ],
           temperature: 0.3,
           max_tokens: 4000,
+        }).catch((apiError) => {
+          // Log raw API error for debugging
+          console.error('[OpenRouter] API call failed with error:', {
+            message: apiError?.message,
+            status: apiError?.status,
+            statusText: apiError?.statusText,
+            response: apiError?.response?.data,
+            type: apiError?.constructor?.name,
+          });
+          throw apiError;
         });
 
         console.log('[OpenRouter] Raw completion response:', JSON.stringify({
@@ -816,10 +831,15 @@ export async function POST(request: NextRequest) {
         }
 
         // Check if it's a rate limit error
-        if (errorMessage.includes('rate limit') || errorMessage.includes('429')) {
+        if (errorMessage.includes('rate limit') || errorMessage.includes('429') || errorMessage.includes('Rate limit') || errorMessage.toLowerCase().includes('quota')) {
           // Mark current key as failed and try fallback
           markKeyAsFailed(currentKeyName, 'Rate limit exceeded');
-          console.log(`[Analysis] Marked ${currentKeyName} as rate limited, switching to fallback key...`);
+          console.log(`[Analysis] ⚠️  ${currentKeyName} is rate limited, switching to fallback key...`);
+
+          // If this is the last retry, throw a user-friendly error
+          if (attempt >= maxRetries - 1) {
+            throw new Error('All API keys have reached their rate limit. Free tier allows 20 requests/minute and 50-1000 requests/day. Please try again later or upgrade your OpenRouter plan.');
+          }
           continue;
         }
 
