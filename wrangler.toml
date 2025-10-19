@@ -1,16 +1,21 @@
-# Cloudflare Workers Configuration for PrivacyHub
+# Cloudflare Configuration for PrivacyHub
+# Deployed via GitHub integration to Cloudflare
+# Uses Pages Functions (Workers) for API routes + D1 database
 name = "privacyhub"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
-# D1 Database binding
+# Next.js build output directory for Cloudflare deployment
+pages_build_output_dir = ".next"
+
+# D1 Database binding for API routes (Pages Functions)
 [[d1_databases]]
 binding = "an-db"
 database_name = "privacyhub"
 database_id = "b64e7663-7a31-4e38-a210-4c570dabd118"
 
-# Environment variables (set in Cloudflare Workers dashboard)
-# Secrets configured via dashboard:
+# Environment variables configured in Cloudflare dashboard
+# Secrets (encrypted):
 # - FIRECRAWL_API_KEY
 # - OPENROUTER_API
 # - OPENROUTER_API_1
