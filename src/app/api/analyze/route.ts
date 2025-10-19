@@ -841,7 +841,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (!analysisText) {
-      throw new Error('No analysis generated');
+      const errorDetails = lastError ? lastError.message : 'Unknown error';
+      console.error('[Analysis] All retry attempts failed. Last error:', errorDetails);
+      throw lastError || new Error('No analysis generated after all retry attempts');
     }
 
     // Parse JSON response
