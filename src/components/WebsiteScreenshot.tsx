@@ -9,14 +9,66 @@ interface WebsiteScreenshotProps {
   screenshotUrl: string;
   homepageUrl: string;
   domain: string;
+  compact?: boolean;
 }
 
-export function WebsiteScreenshot({ screenshotUrl, homepageUrl, domain }: WebsiteScreenshotProps) {
+export function WebsiteScreenshot({ screenshotUrl, homepageUrl, domain, compact = false }: WebsiteScreenshotProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   const hasScreenshot = screenshotUrl && screenshotUrl.length > 0;
 
+  // Compact thumbnail version
+  if (compact) {
+    return (
+      <a
+        href={homepageUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group block"
+        title={`Visit ${domain}`}
+      >
+        <div className="relative w-32 h-24 rounded-lg overflow-hidden border-2 border-indigo-200 bg-white shadow-md hover:shadow-lg transition-shadow">
+          {!hasScreenshot || imageError ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+              <ImageIcon className="h-6 w-6 text-gray-400 mb-1" />
+              <span className="text-[10px] font-medium text-gray-500">N/A</span>
+            </div>
+          ) : (
+            <>
+              {!imageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-indigo-200 border-t-indigo-600" />
+                </div>
+              )}
+              <img
+                src={screenshotUrl}
+                alt={`${domain} homepage`}
+                onLoad={() => setImageLoaded(true)}
+                onError={() => {
+                  setImageError(true);
+                  setImageLoaded(false);
+                }}
+                className={`w-full h-full object-cover object-top ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              />
+            </>
+          )}
+          {/* Hover overlay */}
+          <div className="absolute inset-0 bg-indigo-600 opacity-0 group-hover:opacity-10 transition-opacity" />
+          <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="bg-white/90 rounded p-1">
+              <ExternalLink className="h-3 w-3 text-indigo-600" />
+            </div>
+          </div>
+        </div>
+        <p className="text-[10px] text-center text-indigo-600 mt-1 font-medium">
+          Homepage
+        </p>
+      </a>
+    );
+  }
+
+  // Full card version
   return (
     <Card className="border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-lg overflow-hidden">
       <CardContent className="p-4 sm:p-6">

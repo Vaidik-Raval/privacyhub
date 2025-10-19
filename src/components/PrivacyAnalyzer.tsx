@@ -392,44 +392,48 @@ export default function PrivacyAnalyzer() {
       {/* Results */}
       {result && (
         <div className="space-y-6">
-          {/* Header Section */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Privacy Analysis Results</h3>
-              <div className="flex items-center gap-2 text-sm mt-1">
-                <span className="text-gray-600">Analysis for</span>
-                <a
-                  href={result.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline flex items-center gap-1 font-semibold"
-                >
-                  {new URL(result.url).hostname}
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </div>
-            </div>
-            <Button
-              onClick={() => window.location.href = '/'}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-1.5 text-sm hover:bg-blue-50 border-blue-200"
-            >
-              <Home className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Home</span>
-            </Button>
-          </div>
-
-          {/* Website Screenshot - Always show */}
-          <WebsiteScreenshot
-            screenshotUrl={result.homepage_screenshot || ''}
-            homepageUrl={result.homepage_url || `https://${new URL(result.url).hostname}`}
-            domain={new URL(result.url).hostname}
-          />
-
           {/* Overall Score Dashboard */}
           <Card className="bg-gradient-to-br from-blue-50 via-white to-purple-50 border-2 border-blue-100 shadow-lg">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
+              {/* Header */}
+              <div className="mb-6">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">Privacy Analysis Results</h3>
+                    <div className="flex items-center gap-2 text-xs sm:text-sm">
+                      <span className="text-gray-600">Analysis for</span>
+                      <a
+                        href={result.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline flex items-center gap-1 font-semibold truncate"
+                      >
+                        <span className="truncate">{new URL(result.url).hostname}</span>
+                        <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5 flex-shrink-0" />
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Right side: Screenshot + Home button */}
+                  <div className="flex items-start gap-2 sm:gap-3 flex-shrink-0">
+                    <WebsiteScreenshot
+                      screenshotUrl={result.homepage_screenshot || ''}
+                      homepageUrl={result.homepage_url || `https://${new URL(result.url).hostname}`}
+                      domain={new URL(result.url).hostname}
+                      compact={true}
+                    />
+                    <Button
+                      onClick={() => window.location.href = '/'}
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-1.5 text-sm hover:bg-blue-50 border-blue-200"
+                    >
+                      <Home className="h-3.5 w-3.5" />
+                      <span className="hidden lg:inline">Home</span>
+                    </Button>
+                  </div>
+                </div>
+              </div>
 
               {/* Main Score Visualization */}
               <div className="grid md:grid-cols-3 gap-6 mb-4">
