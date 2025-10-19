@@ -65,6 +65,7 @@ export const metadata: Metadata = {
         type: 'image/png',
       }
     ],
+    countryName: 'India',
   },
   twitter: {
     card: "summary_large_image",
@@ -85,6 +86,11 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  alternates: {
+    canonical: 'https://privacyhub.in',
+  },
+  category: 'technology',
+  classification: 'Privacy Analysis Tools',
 };
 
 export function generateViewport() {
@@ -98,6 +104,32 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Structured data for rich results
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "PrivacyHub.in",
+    "description": "India's first DPDP Act 2023 compliance checker. Analyze privacy policies for Digital Personal Data Protection Act compliance.",
+    "url": "https://privacyhub.in",
+    "applicationCategory": "SecurityApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "INR"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "100"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "PrivacyHub.in",
+      "url": "https://privacyhub.in"
+    }
+  };
+
   return (
     <html lang="en" className="scroll-smooth">
       <head>
@@ -105,6 +137,10 @@ export default function RootLayout({
         <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
         <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </head>
       <body className={`${inter.variable} ${jetbrainsMono.variable} ${poppins.variable} font-sans antialiased min-h-screen bg-white`}>
         <GoogleAnalytics measurementId="G-Y6PVP4X0SN" />

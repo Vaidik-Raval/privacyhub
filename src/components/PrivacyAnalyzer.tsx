@@ -9,6 +9,7 @@ import { CircularProgress } from '@/components/ui/circular-progress';
 import { Heatmap } from '@/components/ui/heatmap';
 import { ScoreCard } from '@/components/ui/score-card';
 import { MethodologySection } from '@/components/MethodologySection';
+import { ShareButtons } from '@/components/ShareButtons';
 import { AlertCircle, CheckCircle, Search, ExternalLink, Shield, Lock, Eye, Users, FileText, Scale, Home, RotateCcw, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
@@ -793,6 +794,13 @@ export default function PrivacyAnalyzer() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Share Results */}
+          <ShareButtons
+            url={result.url}
+            privacyGrade={result.analysis.privacy_grade}
+            overallScore={result.analysis.overall_score}
+          />
 
           {/* Methodology Section */}
           <MethodologySection />
