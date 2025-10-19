@@ -5,8 +5,8 @@ pages_build_output_dir = ".vercel/output/static"
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
-database_name = "privacyhub-db"
-database_id = "your-database-id-here" # Replace with actual D1 database ID after creation
+database_name = "privacyhub"
+database_id = "b64e7663-7a31-4e38-a210-4c570dabd118"
 
 # KV namespace for caching (optional, can use D1 for everything)
 [[kv_namespaces]]
@@ -28,12 +28,3 @@ compatibility_flags = ["nodejs_compat"]
 # Build configuration
 [build]
 command = "npm run build"
-
-# Routes configuration for Next.js on Pages
-[[routes]]
-pattern = "/api/*"
-custom_headers = { "Cache-Control" = "no-cache" }
-
-[[routes]]
-pattern = "/_next/static/*"
-custom_headers = { "Cache-Control" = "public, max-age=31536000, immutable" }

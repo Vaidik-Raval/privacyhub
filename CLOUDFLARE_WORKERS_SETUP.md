@@ -71,37 +71,47 @@ Stores privacy policy analysis results with:
 
 ## Setup Instructions
 
-### 1. Create Cloudflare D1 Database
+### 1. D1 Database Configuration
+
+The D1 database is already configured in `wrangler.toml`:
+
+```toml
+[[d1_databases]]
+binding = "DB"
+database_name = "privacyhub"
+database_id = "b64e7663-7a31-4e38-a210-4c570dabd118"
+```
+
+**Note**: If you need to create a new D1 database:
 
 ```bash
-# Install Wrangler CLI
+# Install Wrangler CLI (if not installed)
 npm install -g wrangler
 
 # Login to Cloudflare
 wrangler login
 
 # Create D1 database
-wrangler d1 create privacyhub-db
-```
-
-This will output a database ID. Copy it and update `wrangler.toml`:
-
-```toml
-[[d1_databases]]
-binding = "DB"
-database_name = "privacyhub-db"
-database_id = "YOUR_DATABASE_ID_HERE"  # Replace with actual ID
+wrangler d1 create privacyhub
 ```
 
 ### 2. Run Database Migration
 
 ```bash
-# Apply the schema to your D1 database
-wrangler d1 execute privacyhub-db --file=./schema.sql
+# Login to Cloudflare first
+wrangler login
 
-# Or run the migration file
-wrangler d1 migrations apply privacyhub-db
+# Apply the schema to your D1 database (remote)
+wrangler d1 execute privacyhub --file=./schema.sql --remote
+
+# For local development, initialize local database
+wrangler d1 execute privacyhub --file=./schema.sql
+
+# Verify tables were created
+wrangler d1 execute privacyhub --command="SELECT name FROM sqlite_master WHERE type='table';" --remote
 ```
+
+**Expected output**: You should see tables: `analyses`, `analysis_stats`, `grade_distribution`, `risk_distribution`
 
 ### 3. Configure Environment Variables
 
