@@ -5,15 +5,12 @@ import { PlaywrightCrawler } from '@crawlee/playwright';
 import { validateUrl } from '@/lib/input-validation';
 import { getBestAvailableKey, markKeyAsFailed } from '@/lib/openrouter-key-manager';
 import {
-  initializeDatabase,
   getCachedAnalysis,
   saveAnalysis,
   generateContentHash,
   extractDomain,
-  type D1Database,
   type AnalysisData
 } from '@/lib/d1-database';
-import type { CloudflareRequest } from '@/types/cloudflare';
 
 // Vercel runtime configuration
 // Extend timeout for privacy policy analysis (OpenRouter API + scraping)
