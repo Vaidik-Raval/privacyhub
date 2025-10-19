@@ -22,12 +22,12 @@ export default function HomePage() {
               </div>
               
               <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-                कोई भी Privacy Policy नहीं पढ़ता। हम पढ़ते हैं। आपके लिए।
+                Know What Apps Do With Your Data. Make Informed Choices.
               </h1>
               <p className="text-lg md:text-xl text-slate-600 mb-8 leading-relaxed">
-                सच कहें तो—आपने कभी कोई privacy policy नहीं पढ़ी। किसी ने नहीं पढ़ी।
-                लेकिन आपको जानने का हक है कि Paytm, PhonePe, Swiggy जैसे apps आपके data के साथ क्या कर रहे हैं।
-                India&rsquo;s DPDP Act 2023 के तहत, हम आपके लिए fine print analyze करते हैं।
+                Privacy policies are long, confusing, and full of legal jargon. We read them for you and explain
+                what they really mean in simple language. Get instant privacy scores, understand your rights
+                under India&rsquo;s DPDP Act 2023, and make better decisions about the apps you trust with your personal information.
               </p>
 
               {/* Privacy Policy Analyser - Moved to top */}
@@ -43,23 +43,23 @@ export default function HomePage() {
 
               {/* Privacy Concerns - India Specific */}
               <div className="bg-orange-50 rounded-lg p-6 mb-8 border border-orange-200">
-                <h3 className="text-lg font-bold text-orange-800 mb-4">भारत में आम Privacy Concerns:</h3>
+                <h3 className="text-lg font-bold text-orange-800 mb-4">Common Privacy Concerns in India:</h3>
                 <div className="grid grid-cols-1 gap-3">
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-sm text-orange-700"><strong>Data Selling:</strong> Payment apps, food delivery, और shopping apps आपकी information बेच सकते हैं</span>
+                    <span className="text-sm text-orange-700"><strong>Data Monetization:</strong> Payment apps, e-commerce, and food delivery services may sell your information to third parties</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-sm text-orange-700"><strong>Aadhaar & UPI Data:</strong> आपकी financial और identity information कैसे use हो रही है?</span>
+                    <span className="text-sm text-orange-700"><strong>Identity & Financial Data:</strong> How is your Aadhaar, UPI, and banking information being used and stored?</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-sm text-orange-700"><strong>WhatsApp Sharing:</strong> Meta (Facebook) के साथ data sharing की hidden policies</span>
+                    <span className="text-sm text-orange-700"><strong>Cross-Border Data Flow:</strong> Foreign apps storing Indian user data overseas without proper consent</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                    <span className="text-sm text-orange-700"><strong>Chinese Apps:</strong> Foreign apps storing Indian user data overseas without consent</span>
+                    <span className="text-sm text-orange-700"><strong>Lack of Transparency:</strong> Complex policies hide how your data is shared and monetized</span>
                   </div>
                 </div>
               </div>
@@ -74,12 +74,12 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              भारत में Privacy क्यों Important है?
+              Why Privacy Matters in India
             </h2>
             <p className="text-lg text-slate-600 max-w-4xl mx-auto">
-              आपका personal data बहुत valuable है। Indian और foreign companies इसे बेचकर पैसा कमाती हैं,
-              governments surveillance के लिए use करती हैं, और hackers इसे चुराना चाहते हैं। DPDP Act 2023
-              आपको protection देता है - जानिए कैसे:
+              Your personal data is incredibly valuable. Companies monetize it, advertisers track you,
+              and hackers want to steal it. India&rsquo;s DPDP Act 2023 gives you protection and rights.
+              Here&rsquo;s what you need to know:
             </p>
           </div>
           
@@ -89,10 +89,10 @@ export default function HomePage() {
                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-2xl">💰</span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">आपका Data = पैसा</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-4">Your Data = Money</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Flipkart, Amazon, Paytm, PhonePe - सभी आपकी shopping habits, UPI transactions,
-                  और personal preferences को advertisers को बेचकर अरबों कमाते हैं। DPDP Act अब इसे regulate करता है।
+                  E-commerce platforms, payment apps, and online services make billions by selling your shopping habits,
+                  transaction data, and personal preferences to advertisers. The DPDP Act now regulates this practice in India.
                 </p>
               </CardContent>
             </Card>
@@ -102,10 +102,10 @@ export default function HomePage() {
                 <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-2xl">👁️</span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">24/7 Tracking</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-4">24/7 Digital Surveillance</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Ola, Uber, Swiggy, Zomato - ये apps आपकी हर location track करते हैं। WhatsApp आपके contacts
-                  और messages monitor करता है। यह data कभी delete नहीं होता।
+                  Mobile apps track your location constantly. Food delivery, ride-hailing, and messaging services
+                  monitor your contacts, movements, and communications. This data is rarely deleted.
                 </p>
               </CardContent>
             </Card>
@@ -115,10 +115,10 @@ export default function HomePage() {
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-2xl">🇮🇳</span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-4">आपके अधिकार (DPDP Act)</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-4">Your Rights Under DPDP Act</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  DPDP Act 2023 आपको Data Principal के रूप में rights देता है - अपना data देखें, delete करें,
-                  correct करें, और sharing से मना करें। Data Protection Board आपकी complaints सुनेगा।
+                  India&rsquo;s DPDP Act 2023 gives you rights as a Data Principal - access your data, delete it,
+                  correct errors, and refuse data sharing. The Data Protection Board will hear your complaints.
                 </p>
               </CardContent>
             </Card>
@@ -131,11 +131,11 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Popular Indian Apps की Privacy कैसी है?
+              How Do Popular Apps Handle Your Privacy?
             </h2>
             <p className="text-lg text-slate-600 max-w-3xl mx-auto">
-              Paytm, PhonePe, Swiggy, Zomato, Flipkart - रोज use होने वाले apps की privacy policies का analysis।
-              पता करें कौन apps DPDP Act follow करते हैं और कौन आपका data misuse करते हैं।
+              Analyze privacy policies of apps and websites you use every day.
+              Discover which ones comply with India&rsquo;s DPDP Act 2023 and which ones misuse your data.
             </p>
           </div>
           
@@ -148,10 +148,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">
-              अपनी Digital Privacy को Control करें
+              Take Control of Your Digital Privacy
             </h2>
             <p className="text-lg text-slate-200 max-w-3xl mx-auto mb-10">
-              छोटे changes से बड़ा फर्क पड़ता है। भारत में digital privacy protect करने के simple tools और tips।
+              Small changes can make a big difference. Simple tools and tips to protect your privacy in India.
             </p>
           </div>
 
@@ -204,17 +204,17 @@ export default function HomePage() {
 
           {/* Quick Privacy Tips - India Specific */}
           <div className="mt-16 bg-slate-800 rounded-2xl p-8">
-            <h3 className="text-2xl font-bold text-white text-center mb-8">भारतीय Users के लिए Privacy Tips</h3>
+            <h3 className="text-2xl font-bold text-white text-center mb-8">Quick Privacy Tips for Indian Users</h3>
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white text-sm font-bold">1</span>
                 </div>
                 <div>
-                  <h4 className="text-lg font-bold text-white mb-2">UPI और Payment Apps में Permissions Check करें</h4>
+                  <h4 className="text-lg font-bold text-white mb-2">Review Payment App Permissions</h4>
                   <p className="text-slate-300 text-sm">
-                    PhonePe, Paytm, Google Pay को location, contacts, और SMS access की जरूरत नहीं। Settings में जाकर
-                    unnecessary permissions band करें।
+                    Payment and UPI apps don&rsquo;t need access to your location, contacts, or SMS.
+                    Go to your phone settings and disable unnecessary permissions for better privacy.
                   </p>
                 </div>
               </div>
@@ -223,10 +223,10 @@ export default function HomePage() {
                   <span className="text-white text-sm font-bold">2</span>
                 </div>
                 <div>
-                  <h4 className="text-lg font-bold text-white mb-2">Aadhaar Linking सोच समझकर करें</h4>
+                  <h4 className="text-lg font-bold text-white mb-2">Be Careful with Aadhaar Linking</h4>
                   <p className="text-slate-300 text-sm">
-                    हर app या website को Aadhaar link करने की जरूरत नहीं। सिर्फ legal requirement वाले services के लिए ही link करें।
-                    DPDP Act आपको excessive Aadhaar linking से protect करता है।
+                    Not every app or website needs your Aadhaar. Only link it to services with legal requirements.
+                    The DPDP Act protects you from excessive Aadhaar linking practices.
                   </p>
                 </div>
               </div>
@@ -235,10 +235,10 @@ export default function HomePage() {
                   <span className="text-white text-sm font-bold">3</span>
                 </div>
                 <div>
-                  <h4 className="text-lg font-bold text-white mb-2">Foreign Apps की Privacy Policy पढ़ें</h4>
+                  <h4 className="text-lg font-bold text-white mb-2">Check Data Storage Location</h4>
                   <p className="text-slate-300 text-sm">
-                    Chinese apps, social media platforms - क्या वे आपका data India में store करते हैं? DPDP Act के तहत
-                    यह जानना आपका अधिकार है। Analysis करवाएं हमसे।
+                    Under DPDP Act, you have the right to know where your data is stored. Foreign apps should
+                    disclose if they store Indian user data overseas. Use our analyzer to check.
                   </p>
                 </div>
               </div>
@@ -247,10 +247,10 @@ export default function HomePage() {
                   <span className="text-white text-sm font-bold">4</span>
                 </div>
                 <div>
-                  <h4 className="text-lg font-bold text-white mb-2">Data Deletion का Right Use करें</h4>
+                  <h4 className="text-lg font-bold text-white mb-2">Exercise Your Right to Delete Data</h4>
                   <p className="text-slate-300 text-sm">
-                    Swiggy, Zomato, Ola से जो apps अब use नहीं करते, उनसे अपना data delete करवाने का right DPDP Act देता है।
-                    Grievance officer को email करें।
+                    For apps you no longer use, the DPDP Act gives you the right to request data deletion.
+                    Contact the app&rsquo;s grievance officer to exercise this right.
                   </p>
                 </div>
               </div>
