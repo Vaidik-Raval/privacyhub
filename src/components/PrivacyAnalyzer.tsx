@@ -392,39 +392,44 @@ export default function PrivacyAnalyzer() {
       {/* Results */}
       {result && (
         <div className="space-y-6">
+          {/* Header Section */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Privacy Analysis Results</h3>
+              <div className="flex items-center gap-2 text-sm mt-1">
+                <span className="text-gray-600">Analysis for</span>
+                <a
+                  href={result.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline flex items-center gap-1 font-semibold"
+                >
+                  {new URL(result.url).hostname}
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            </div>
+            <Button
+              onClick={() => window.location.href = '/'}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-1.5 text-sm hover:bg-blue-50 border-blue-200"
+            >
+              <Home className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Home</span>
+            </Button>
+          </div>
+
+          {/* Website Screenshot - Always show */}
+          <WebsiteScreenshot
+            screenshotUrl={result.homepage_screenshot || ''}
+            homepageUrl={result.homepage_url || `https://${new URL(result.url).hostname}`}
+            domain={new URL(result.url).hostname}
+          />
+
           {/* Overall Score Dashboard */}
           <Card className="bg-gradient-to-br from-blue-50 via-white to-purple-50 border-2 border-blue-100 shadow-lg">
             <CardContent className="p-6">
-              {/* Header */}
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex-1" />
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Privacy Analysis Results</h3>
-                  <div className="flex-1 flex justify-end">
-                    <Button
-                      onClick={() => window.location.href = '/'}
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-1.5 text-sm hover:bg-blue-50 border-blue-200"
-                    >
-                      <Home className="h-3.5 w-3.5" />
-                      Home
-                    </Button>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center gap-2 text-sm">
-                  <span className="text-gray-600">Analysis for</span>
-                  <a
-                    href={result.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline flex items-center gap-1 font-semibold"
-                  >
-                    {new URL(result.url).hostname}
-                    <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
-                </div>
-              </div>
 
               {/* Main Score Visualization */}
               <div className="grid md:grid-cols-3 gap-6 mb-4">
@@ -551,15 +556,6 @@ export default function PrivacyAnalyzer() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Website Screenshot */}
-          {result.homepage_screenshot && result.homepage_url && (
-            <WebsiteScreenshot
-              screenshotUrl={result.homepage_screenshot}
-              homepageUrl={result.homepage_url}
-              domain={new URL(result.url).hostname}
-            />
-          )}
 
           {/* Important Disclaimer - Prominent Position */}
           <Card className="border-2 border-amber-300 bg-gradient-to-br from-amber-50 to-orange-50 shadow-lg">

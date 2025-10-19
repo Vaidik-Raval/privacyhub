@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { ExternalLink, Monitor, AlertCircle } from 'lucide-react';
+import { ExternalLink, Monitor, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface WebsiteScreenshotProps {
@@ -15,9 +15,7 @@ export function WebsiteScreenshot({ screenshotUrl, homepageUrl, domain }: Websit
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  if (!screenshotUrl) {
-    return null;
-  }
+  const hasScreenshot = screenshotUrl && screenshotUrl.length > 0;
 
   return (
     <Card className="border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-lg overflow-hidden">
@@ -54,57 +52,68 @@ export function WebsiteScreenshot({ screenshotUrl, homepageUrl, domain }: Websit
 
         {/* Screenshot Container */}
         <div className="relative bg-white rounded-lg overflow-hidden shadow-xl border-2 border-indigo-100">
-          {/* Loading State */}
-          {!imageLoaded && !imageError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+          {!hasScreenshot || imageError ? (
+            /* N/A State - No Screenshot Available */
+            <div className="flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-12 sm:p-16 min-h-[300px]">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-10 w-10 border-4 border-indigo-200 border-t-indigo-600 mx-auto mb-2" />
-                <p className="text-sm text-gray-600">Loading screenshot...</p>
+                <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ImageIcon className="h-10 w-10 text-gray-400" />
+                </div>
+                <p className="text-lg font-semibold text-gray-700 mb-2">Screenshot Not Available</p>
+                <p className="text-sm text-gray-500 max-w-md">
+                  {imageError ? 'Screenshot link expired or failed to load' : 'Screenshot could not be captured during analysis'}
+                </p>
+                <div className="mt-4 inline-flex items-center gap-2 bg-gray-200 px-4 py-2 rounded-full">
+                  <span className="text-sm font-medium text-gray-600">N/A</span>
+                </div>
               </div>
             </div>
-          )}
+          ) : (
+            <>
+              {/* Loading State */}
+              {!imageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-10 w-10 border-4 border-indigo-200 border-t-indigo-600 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600">Loading screenshot...</p>
+                  </div>
+                </div>
+              )}
 
-          {/* Error State */}
-          {imageError && (
-            <div className="flex items-center justify-center bg-gray-50 p-8 sm:p-12">
-              <div className="text-center">
-                <AlertCircle className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-sm text-gray-600">Screenshot unavailable</p>
-                <p className="text-xs text-gray-500 mt-1">The screenshot link may have expired</p>
+              {/* Screenshot Image */}
+              <div className={`${imageLoaded ? 'block' : 'hidden'}`}>
+                <div className="relative overflow-hidden" style={{ maxHeight: '500px' }}>
+                  <img
+                    src={screenshotUrl}
+                    alt={`Homepage screenshot of ${domain}`}
+                    onLoad={() => setImageLoaded(true)}
+                    onError={() => {
+                      setImageError(true);
+                      setImageLoaded(false);
+                    }}
+                    className="w-full h-auto object-cover object-top"
+                    style={{ maxHeight: '500px' }}
+                  />
+                  {/* Fade overlay at bottom for long screenshots */}
+                  <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/50 to-transparent pointer-events-none" />
+                </div>
               </div>
-            </div>
+            </>
           )}
-
-          {/* Screenshot Image */}
-          <div className={`${imageLoaded ? 'block' : 'hidden'}`}>
-            <div className="relative overflow-hidden" style={{ maxHeight: '600px' }}>
-              <img
-                src={screenshotUrl}
-                alt={`Homepage screenshot of ${domain}`}
-                onLoad={() => setImageLoaded(true)}
-                onError={() => {
-                  setImageError(true);
-                  setImageLoaded(false);
-                }}
-                className="w-full h-auto object-cover object-top"
-                style={{ maxHeight: '600px' }}
-              />
-              {/* Fade overlay at bottom for long screenshots */}
-              <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-            </div>
-          </div>
         </div>
 
         {/* Screenshot Info */}
-        <div className="mt-3 text-xs text-indigo-600 flex items-center justify-between">
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 bg-indigo-400 rounded-full" />
-            Desktop view
-          </span>
-          <span className="text-indigo-500">
-            Screenshot expires in 24 hours
-          </span>
-        </div>
+        {hasScreenshot && !imageError && (
+          <div className="mt-3 text-xs text-indigo-600 flex items-center justify-between flex-wrap gap-2">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
+              <span className="font-medium">Desktop view</span>
+            </span>
+            <span className="text-indigo-500">
+              {screenshotUrl.startsWith('data:') ? 'Inline screenshot' : 'Expires in 24 hours'}
+            </span>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

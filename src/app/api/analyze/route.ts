@@ -95,8 +95,9 @@ async function scrapeWithFetch(url: string): Promise<string> {
 }
 
 // Crawlee PlaywrightCrawler fallback scraper with anti-blocking features
-async function scrapeWithCrawlee(url: string): Promise<string> {
+async function scrapeWithCrawlee(url: string, captureScreenshot: boolean = false): Promise<{ content: string; screenshot?: string }> {
   let extractedContent = '';
+  let screenshotBase64 = '';
   let lastError: Error | null = null;
 
   try {
@@ -170,6 +171,23 @@ async function scrapeWithCrawlee(url: string): Promise<string> {
       async requestHandler({ page, request, log }) {
         log.info(`Extracting content from: ${request.loadedUrl}`);
 
+        // Capture screenshot if requested
+        if (captureScreenshot) {
+          try {
+            log.info('Capturing screenshot...');
+            const screenshot = await page.screenshot({
+              fullPage: true,
+              type: 'png',
+            });
+            screenshotBase64 = `data:image/png;base64,${screenshot.toString('base64')}`;
+            log.info('Screenshot captured successfully');
+          } catch (screenshotError) {
+            const errorMsg = screenshotError instanceof Error ? screenshotError.message : String(screenshotError);
+            log.warning(`Failed to capture screenshot: ${errorMsg}`);
+            // Non-critical, continue with content extraction
+          }
+        }
+
         // Extract main content text using Playwright's page.evaluate
         try {
           extractedContent = await page.evaluate(() => {
@@ -241,7 +259,10 @@ async function scrapeWithCrawlee(url: string): Promise<string> {
       throw lastError;
     }
 
-    return extractedContent;
+    return {
+      content: extractedContent,
+      screenshot: screenshotBase64 || undefined,
+    };
   } catch (error) {
     console.error('Crawlee scraping failed:', error);
     throw error;
@@ -504,7 +525,8 @@ export async function POST(request: NextRequest) {
     if (!content || content.length < 100) {
       console.log('Falling back to Crawlee PlaywrightCrawler...');
       try {
-        content = await scrapeWithCrawlee(sanitizedUrl);
+        const crawleeResult = await scrapeWithCrawlee(sanitizedUrl);
+        content = crawleeResult.content;
         scraperUsed = 'crawlee';
 
         if (!content || content.length < 100) {
@@ -574,7 +596,7 @@ export async function POST(request: NextRequest) {
     // Capture homepage screenshot using Firecrawl (non-blocking, best effort)
     if (process.env.FIRECRAWL_API_KEY) {
       try {
-        console.log('Attempting to capture homepage screenshot...');
+        console.log('Attempting to capture homepage screenshot with Firecrawl...');
         const firecrawl = getFirecrawlClient();
 
         const screenshotResult = await (firecrawl as unknown as {
@@ -604,7 +626,7 @@ export async function POST(request: NextRequest) {
             const data = response.data as Record<string, unknown>;
             if (typeof data.screenshot === 'string') {
               homepageScreenshot = data.screenshot;
-              console.log('Homepage screenshot captured successfully');
+              console.log('Homepage screenshot captured successfully with Firecrawl');
             }
           }
           // V3 format
@@ -612,19 +634,35 @@ export async function POST(request: NextRequest) {
             const data = response.data as Record<string, unknown>;
             if (typeof data.screenshot === 'string') {
               homepageScreenshot = data.screenshot;
-              console.log('Homepage screenshot captured successfully');
+              console.log('Homepage screenshot captured successfully with Firecrawl');
             }
           }
           // Direct format
           else if (typeof response.screenshot === 'string') {
             homepageScreenshot = response.screenshot;
-            console.log('Homepage screenshot captured successfully');
+            console.log('Homepage screenshot captured successfully with Firecrawl');
           }
         }
       } catch (screenshotError) {
         // Non-blocking: Log error but continue with analysis
         const errorMsg = screenshotError instanceof Error ? screenshotError.message : String(screenshotError);
-        console.warn('Failed to capture homepage screenshot (non-critical):', errorMsg);
+        console.warn('Firecrawl screenshot failed, will try Crawlee fallback:', errorMsg);
+      }
+    }
+
+    // Fallback to Crawlee for screenshot if Firecrawl failed or not available
+    if (!homepageScreenshot) {
+      try {
+        console.log('Attempting to capture homepage screenshot with Crawlee...');
+        const crawleeResult = await scrapeWithCrawlee(homepageUrl, true);
+        if (crawleeResult.screenshot) {
+          homepageScreenshot = crawleeResult.screenshot;
+          console.log('Homepage screenshot captured successfully with Crawlee');
+        }
+      } catch (screenshotError) {
+        // Non-blocking: Log error but continue with analysis
+        const errorMsg = screenshotError instanceof Error ? screenshotError.message : String(screenshotError);
+        console.warn('Failed to capture homepage screenshot with Crawlee (non-critical):', errorMsg);
       }
     }
 
