@@ -23,11 +23,12 @@ const CACHE_DURATION = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
 
 /**
  * Get all available API keys from environment
+ * Supports both process.env (local) and Cloudflare Workers env binding
  */
-function getAllKeys(): Array<{ name: string; key: string }> {
-  const defaultKey = process.env.OPENROUTER_API;
-  const keyOne = process.env.OPENROUTER_API_1;
-  const keyTwo = process.env.OPENROUTER_API_2;
+function getAllKeys(env?: Record<string, string | undefined>): Array<{ name: string; key: string }> {
+  const defaultKey = env?.OPENROUTER_API || process.env.OPENROUTER_API;
+  const keyOne = env?.OPENROUTER_API_1 || process.env.OPENROUTER_API_1;
+  const keyTwo = env?.OPENROUTER_API_2 || process.env.OPENROUTER_API_2;
 
   // Daily rotation: 3-day cycle based on day of year
   const dayOfYear = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
@@ -108,12 +109,13 @@ async function checkKeyCredits(apiKey: string): Promise<{
 
 /**
  * Get the best available API key based on current status
+ * Pass env from Cloudflare Workers binding, or leave undefined for process.env
  */
-export async function getBestAvailableKey(): Promise<{
+export async function getBestAvailableKey(env?: Record<string, string | undefined>): Promise<{
   key: string;
   name: string;
 } | null> {
-  const allKeys = getAllKeys();
+  const allKeys = getAllKeys(env);
 
   if (allKeys.length === 0) {
     console.error('[KeyManager] No API keys configured');
@@ -188,9 +190,10 @@ export function isCacheStale(): boolean {
 
 /**
  * Force refresh all key statuses
+ * Pass env from Cloudflare Workers binding, or leave undefined for process.env
  */
-export async function refreshAllKeyStatus(): Promise<void> {
-  const allKeys = getAllKeys();
+export async function refreshAllKeyStatus(env?: Record<string, string | undefined>): Promise<void> {
+  const allKeys = getAllKeys(env);
 
   for (const { name, key } of allKeys) {
     const status = await checkKeyCredits(key);

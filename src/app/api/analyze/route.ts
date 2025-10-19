@@ -21,8 +21,8 @@ import type { CloudflareRequest } from '@/types/cloudflare';
 export const dynamic = 'force-dynamic';
 
 // Initialize OpenAI client with best available API key
-async function getOpenAIClient() {
-  const keyInfo = await getBestAvailableKey();
+async function getOpenAIClient(env?: Record<string, string | undefined>) {
+  const keyInfo = await getBestAvailableKey(env);
 
   if (!keyInfo) {
     throw new Error('No OpenRouter API keys available');
@@ -413,14 +413,10 @@ export async function POST(request: NextRequest) {
     // Get Cloudflare Workers environment bindings (with fallback to process.env for local development)
     const cfRequest = request as CloudflareRequest;
     const db: D1Database | undefined = cfRequest.env?.["an-db"];
-    const OPENROUTER_API = cfRequest.env?.OPENROUTER_API || process.env.OPENROUTER_API;
-    const FIRECRAWL_API_KEY = cfRequest.env?.FIRECRAWL_API_KEY || process.env.FIRECRAWL_API_KEY;
+    const env = cfRequest.env as Record<string, string | undefined> | undefined;
+    const FIRECRAWL_API_KEY = env?.FIRECRAWL_API_KEY || process.env.FIRECRAWL_API_KEY;
 
-    // Check required environment variables
-    if (!OPENROUTER_API) {
-      console.error('OPENROUTER_API not configured');
-      return NextResponse.json({ error: 'API configuration error. OPENROUTER_API not found.' }, { status: 500 });
-    }
+    // No need to check OPENROUTER_API here - the key manager will handle it
 
     // Initialize D1 database schema on first access (idempotent, non-blocking)
     if (db) {
@@ -750,7 +746,7 @@ export async function POST(request: NextRequest) {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       let currentKeyName = '';
       try {
-        const { client: openai, keyName } = await getOpenAIClient();
+        const { client: openai, keyName } = await getOpenAIClient(env);
         currentKeyName = keyName;
 
         console.log(`[Analysis] Using ${keyName} for AI analysis (attempt ${attempt + 1}/${maxRetries})`);

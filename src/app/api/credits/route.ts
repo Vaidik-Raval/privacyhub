@@ -10,6 +10,10 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: NextRequest) {
   try {
+    // Get Cloudflare Workers environment bindings
+    const cfRequest = request as { env?: Record<string, string | undefined> };
+    const env = cfRequest.env;
+
     // Check if JSON format or manual refresh is requested
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format');
@@ -23,7 +27,7 @@ export async function GET(request: NextRequest) {
       const reason = forceRefresh ? 'manual refresh requested' :
                      Object.keys(keyStatus).length === 0 ? 'empty' : 'stale (>4 hours)';
       console.log(`[Credits] Cache ${reason}, refreshing all key statuses...`);
-      await refreshAllKeyStatus();
+      await refreshAllKeyStatus(env);
       keyStatus = getAllKeyStatus();
     } else {
       console.log('[Credits] Using cached key status (fresh)');
