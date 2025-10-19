@@ -10,22 +10,25 @@ export default function DigitalFingerprintPage() {
       <section className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-red-800 bg-clip-text text-transparent mb-6">
-            What Data Your Browser Is Leaking
+            What Websites Know About You
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-10">
-            Discover what information websites can automatically collect about you without your explicit permission. 
-            This educational tool reveals your digital fingerprint while keeping your data completely private.
+          <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-4">
+            Even without clicking &quot;I Accept,&quot; websites are already collecting information about you.
           </p>
-          
+          <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed mb-10">
+            Your browser is <strong>leaking data</strong> right now—your device type, location, screen size, and much more.
+            This tool shows you exactly what they can see. <strong className="text-red-700">Knowledge is power.</strong>
+          </p>
+
           {/* Privacy Guarantee */}
-          <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur rounded-xl p-6 border border-green-200">
+          <div className="max-w-2xl mx-auto bg-white/90 backdrop-blur rounded-xl p-6 border-2 border-green-300 shadow-lg">
             <div className="flex items-center justify-center gap-3 mb-3">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-lg font-semibold text-green-800">Your Privacy is Protected</span>
+              <span className="text-xl font-bold text-green-800">🔒 Your Privacy is Protected Here</span>
             </div>
-            <p className="text-green-700">
-              <strong>Nothing is stored, saved, or shared.</strong> All analysis happens locally in your browser 
-              and is discarded when you close this tab.
+            <p className="text-green-800 font-medium">
+              <strong>Nothing is stored, saved, or sent anywhere.</strong> All analysis happens right in your browser
+              and disappears when you close this tab. We&apos;re showing you what websites CAN collect—but we don&apos;t collect it ourselves.
             </p>
           </div>
         </div>
