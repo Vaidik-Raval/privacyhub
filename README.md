@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-**AI-powered privacy policy analyzer helping users understand how websites handle their personal data with comprehensive GDPR, CCPA, and DPDP Act 2023 compliance analysis.**
+**India's first AI-powered privacy policy analyzer helping users understand how websites handle their personal data with comprehensive DPDP Act 2023 compliance analysis.**
 
 [🌐 Live Demo](https://privacyhub.in) · [📖 Methodology](https://privacyhub.in/methodology) · [🐛 Report Bug](https://github.com/privacypriority/privacyhub/issues) · [✨ Request Feature](https://github.com/privacypriority/privacyhub/issues)
 
@@ -38,10 +38,11 @@ PrivacyHub is a production-ready, AI-powered privacy policy analyzer that empowe
 
 ### Why PrivacyHub?
 
-- 🔍 **Evidence-Based Analysis**: Scientific methodology based on GDPR, CCPA, DPDP Act 2023, and industry standards
+- 🇮🇳 **India-Focused**: First privacy analyzer built specifically for India's DPDP Act 2023
+- 🔍 **Evidence-Based Analysis**: Scientific methodology based on DPDP Act 2023 and international best practices
 - 🤖 **AI-Powered**: DeepSeek Chat model via OpenRouter for sophisticated policy analysis
 - 📊 **Comprehensive Scoring**: 6-category weighted assessment with 90+ privacy criteria
-- 🌍 **Multi-Regulatory**: GDPR (EU), CCPA (California), DPDP Act 2023 (India) compliance checks
+- 🎯 **DPDP Act Compliance**: In-depth analysis of Digital Personal Data Protection Act 2023 requirements
 - 🎨 **Modern UX**: Intuitive dashboard with visual analytics and category breakdowns
 - 🚀 **Production-Ready**: Enterprise-grade error handling, fallback systems, and security measures
 
@@ -53,11 +54,11 @@ PrivacyHub is a production-ready, AI-powered privacy policy analyzer that empowe
 
 - **🔐 Advanced Privacy Analysis**
   - AI-powered comprehensive privacy policy evaluation
-  - Multi-regulatory compliance assessment (GDPR, CCPA, DPDP Act 2023)
+  - India DPDP Act 2023 compliance assessment
   - 6 weighted categories: Data Collection (30%), Data Sharing (25%), User Rights (20%), Security (15%), Compliance (7%), Transparency (3%)
   - 5-tier risk classification (HIGH, MODERATE-HIGH, MODERATE, LOW, EXEMPLARY)
   - Letter grades (A+ to F) for quick assessment
-  - Evidence-based findings with specific regulatory references
+  - Evidence-based findings with specific DPDP Act regulatory references
 
 - **📊 Interactive Results Dashboard**
   - Overall privacy score (1-10 scale) with circular progress visualization
@@ -111,38 +112,44 @@ PrivacyHub is a production-ready, AI-powered privacy policy analyzer that empowe
 
 ## 📐 Analysis Methodology
 
-PrivacyHub uses a scientifically-grounded, evidence-based framework for privacy assessment:
+PrivacyHub uses a scientifically-grounded, evidence-based framework for privacy assessment focused on India's DPDP Act 2023:
 
 ### Assessment Categories (Weighted)
 
 1. **Data Minimization & Collection (30%)**
    - Collection scope, legal basis, purpose specification
-   - Sensitive data protections (GDPR Art. 9, DPDP Act Sec. 9)
-   - Children's data compliance (COPPA/GDPR-K/DPDP Act Sec. 9)
+   - Sensitive personal data protections (DPDP Act Sec. 9)
+   - Children's data compliance (DPDP Act Sec. 9)
+   - Data fiduciary obligations and transparency
 
 2. **Third-Party Data Sharing (25%)**
    - Sharing scope and commercial exploitation
-   - International transfers (GDPR Ch. V, DPDP Act Sec. 16)
-   - Processor agreements (GDPR Art. 28, DPDP Act Sec. 8)
+   - International transfers and cross-border data flow (DPDP Act Sec. 16)
+   - Data processor agreements (DPDP Act Sec. 8)
+   - Consent Manager integration readiness
 
 3. **Individual Rights & Controls (20%)**
-   - Access, rectification, erasure rights
-   - Data portability, objection mechanisms
-   - Grievance redressal (DPDP Act Sec. 32)
+   - Data Principal rights: access, correction, erasure (DPDP Act Sec. 11-12)
+   - Data portability and objection mechanisms
+   - Grievance redressal mechanisms (DPDP Act Sec. 32)
+   - Withdrawal of consent (DPDP Act Sec. 7)
 
 4. **Security & Risk Management (15%)**
    - Encryption standards (end-to-end, in-transit, at-rest)
-   - Incident response (72-hour GDPR/DPDP Act requirement)
-   - Data localization (DPDP Act compliance)
+   - Incident response and breach notification
+   - Data localization compliance for India
+   - Reasonable security safeguards (DPDP Act Sec. 8)
 
 5. **Regulatory Compliance (7%)**
-   - GDPR, CCPA, DPDP Act 2023 indicators
-   - DPO designation, Data Protection Board registration
-   - Sectoral compliance (HIPAA, FERPA, GLBA)
+   - DPDP Act 2023 compliance indicators
+   - Data Protection Board registration requirements
+   - Data fiduciary and Significant Data Fiduciary obligations
+   - Consent Manager framework compliance
 
 6. **Transparency & Communication (3%)**
-   - Plain language usage (Flesch-Kincaid readability)
-   - Grievance officer details
+   - Plain language usage and readability
+   - Grievance officer details (DPDP Act requirement)
+   - Vernacular language support for Indian languages
    - Proactive change notifications
 
 ### Risk Classification
@@ -354,16 +361,14 @@ privacyhub/
     "risk_level": "LOW",
     "privacy_grade": "A-",
     "regulatory_compliance": {
-      "gdpr_compliance": "COMPLIANT",
-      "ccpa_compliance": "PARTIALLY_COMPLIANT",
-      "dpdp_act_compliance": "NOT_APPLICABLE",
+      "dpdp_act_compliance": "COMPLIANT",
       "major_violations": []
     },
     "categories": {
       "data_collection": {
         "score": 8.5,
         "reasoning": "...",
-        "regulatory_notes": "..."
+        "dpdp_notes": "..."
       },
       // ... 5 more categories
     },
@@ -521,11 +526,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Lucide](https://lucide.dev/) - Icon library
 - [Vercel](https://vercel.com/) - Hosting platform
 
-### Regulatory Frameworks
+### Regulatory Framework
 
-- [GDPR](https://gdpr.eu/) - General Data Protection Regulation (EU)
-- [CCPA](https://oag.ca.gov/privacy/ccpa) - California Consumer Privacy Act
 - [DPDP Act 2023](https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf) - Digital Personal Data Protection Act (India)
+- [IT Act 2000](https://www.meity.gov.in/content/information-technology-act) - Information Technology Act (India)
+- [IT Rules 2011](https://www.meity.gov.in/content/information-technology-rules-2011) - Reasonable Security Practices and Procedures
 
 ### Inspired By
 

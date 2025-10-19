@@ -19,16 +19,14 @@ interface AnalysisResult {
     overall_score: number;
     risk_level: string;
     regulatory_compliance: {
-      gdpr_compliance: string;
-      ccpa_compliance: string;
-      dpdp_act_compliance?: string;
+      dpdp_act_compliance: string;
       major_violations: string[];
     };
     categories: {
       [key: string]: {
         score: number;
         reasoning: string;
-        regulatory_notes?: string;
+        dpdp_notes?: string;
       };
     };
     critical_findings: {
@@ -514,43 +512,38 @@ export default function PrivacyAnalyzer() {
                 </p>
               </div>
 
-              {/* Compliance Status */}
-              <div className="grid md:grid-cols-3 gap-3">
-                <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Scale className="h-4 w-4 text-blue-600" />
-                      <span className="font-semibold text-sm">GDPR</span>
+              {/* Compliance Status - DPDP Act 2023 */}
+              <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border-2 border-orange-200 shadow-md">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-orange-100 rounded-full p-2">
+                      <FileText className="h-5 w-5 text-orange-600" />
                     </div>
-                    <Badge className={`px-2.5 py-0.5 text-xs font-bold ${getComplianceColor(result.analysis.regulatory_compliance.gdpr_compliance)}`}>
-                      {result.analysis.regulatory_compliance.gdpr_compliance.replace('_', ' ')}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-purple-600" />
-                      <span className="font-semibold text-sm">CCPA</span>
+                    <div>
+                      <span className="font-bold text-sm text-gray-600">India DPDP Act 2023 Compliance</span>
+                      <p className="text-xs text-gray-500">Digital Personal Data Protection Act</p>
                     </div>
-                    <Badge className={`px-2.5 py-0.5 text-xs font-bold ${getComplianceColor(result.analysis.regulatory_compliance.ccpa_compliance || 'NOT_APPLICABLE')}`}>
-                      {(result.analysis.regulatory_compliance.ccpa_compliance || 'NOT_APPLICABLE').replace('_', ' ')}
-                    </Badge>
                   </div>
+                  <Badge className={`px-4 py-2 text-sm font-bold ${getComplianceColor(result.analysis.regulatory_compliance.dpdp_act_compliance || 'NOT_APPLICABLE')}`}>
+                    {(result.analysis.regulatory_compliance.dpdp_act_compliance || 'N/A').replace('_', ' ')}
+                  </Badge>
                 </div>
-
-                <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-orange-600" />
-                      <span className="font-semibold text-sm">DPDP Act</span>
-                    </div>
-                    <Badge className={`px-2.5 py-0.5 text-xs font-bold ${getComplianceColor(result.analysis.regulatory_compliance.dpdp_act_compliance || 'NOT_APPLICABLE')}`}>
-                      {(result.analysis.regulatory_compliance.dpdp_act_compliance || 'N/A').replace('_', ' ')}
-                    </Badge>
+                <p className="text-xs text-gray-500 mt-2 italic">
+                  Note: Compliance assessment is indicative. Act not yet fully enforced.
+                </p>
+                {result.analysis.regulatory_compliance.major_violations && result.analysis.regulatory_compliance.major_violations.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-orange-200">
+                    <p className="text-xs font-semibold text-orange-800 mb-1">Major Violations:</p>
+                    <ul className="space-y-1">
+                      {result.analysis.regulatory_compliance.major_violations.slice(0, 3).map((violation, index) => (
+                        <li key={index} className="text-xs text-orange-700 flex items-start gap-2">
+                          <span className="text-orange-500 mt-0.5">•</span>
+                          <span>{violation}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -644,14 +637,17 @@ export default function PrivacyAnalyzer() {
                     })}
                   />
                   
-                  {/* Regulatory Notes */}
+                  {/* DPDP Act Compliance Notes */}
                   <div className="space-y-3">
-                    <h5 className="text-sm font-semibold text-gray-700">Regulatory Compliance Notes</h5>
+                    <h5 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-orange-600" />
+                      DPDP Act 2023 Compliance Notes
+                    </h5>
                     {Object.entries(result.analysis.categories).map(([key, category]) => (
-                      category.regulatory_notes && (
-                        <div key={key} className="bg-blue-50 border-l-4 border-blue-200 p-3 rounded">
-                          <p className="text-sm text-blue-800">
-                            <strong>{key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> {category.regulatory_notes}
+                      category.dpdp_notes && (
+                        <div key={key} className="bg-orange-50 border-l-4 border-orange-200 p-3 rounded">
+                          <p className="text-sm text-orange-800">
+                            <strong>{key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> {category.dpdp_notes}
                           </p>
                         </div>
                       )

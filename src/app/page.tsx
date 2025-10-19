@@ -116,8 +116,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-4">You Have Rights</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Laws like GDPR give you the right to know what data is collected, 
-                  delete your information, and say no to data sharing.
+                  India&rsquo;s DPDP Act 2023 gives you the right to know what data is collected,
+                  delete your information, correct errors, and say no to data sharing.
                 </p>
               </CardContent>
             </Card>

@@ -14,85 +14,90 @@ export function MethodologySection() {
       name: 'Data Minimization & Collection',
       weight: 30,
       icon: <Shield className="h-5 w-5" />,
-      description: 'Evaluates data collection scope, legal basis clarity, purpose specification, and sensitive data handling per GDPR, CCPA, and DPDP Act 2023',
+      description: 'Evaluates data collection scope, legal basis clarity, purpose specification, and sensitive data handling per DPDP Act 2023',
       criteria: [
         'Collection limited to necessary data for stated purposes',
-        'Clear lawful basis identification (GDPR Art. 6, DPDP Act Sec. 6)',
+        'Clear lawful basis identification (DPDP Act Sec. 6)',
         'Specific vs. vague purpose statements',
-        'Special category data protections (GDPR Art. 9, DPDP Act Sec. 9)',
-        'Children\'s data compliance (COPPA/GDPR-K/DPDP Act Sec. 9)',
-        'Notice and consent mechanisms per DPDP Act requirements'
+        'Sensitive personal data protections (DPDP Act Sec. 9)',
+        'Children\'s data compliance (DPDP Act Sec. 9)',
+        'Notice and consent mechanisms per DPDP Act requirements',
+        'Data fiduciary obligations and transparency'
       ]
     },
     {
       name: 'Third-Party Data Sharing',
       weight: 25,
       icon: <Users className="h-5 w-5" />,
-      description: 'Assesses data controller/processor relationships and international transfer mechanisms per GDPR Chapter V and DPDP Act requirements',
+      description: 'Assesses data fiduciary/processor relationships and international transfer mechanisms per DPDP Act requirements',
       criteria: [
         'Sharing scope and commercial exploitation',
-        'International transfer compliance (SCCs/BCRs, DPDP Act Sec. 16)',
-        'Data processor agreements (GDPR Art. 28, DPDP Act Sec. 8)',
+        'International transfer compliance (DPDP Act Sec. 16)',
+        'Data processor agreements (DPDP Act Sec. 8)',
         'Granular consent mechanisms',
         'User awareness of data monetization',
-        'Cross-border transfer compliance with DPDP Act restricted countries'
+        'Cross-border transfer compliance with DPDP Act restricted countries',
+        'Consent Managers and compliance framework'
       ]
     },
     {
       name: 'Individual Rights & Controls',
       weight: 20,
       icon: <Scale className="h-5 w-5" />,
-      description: 'Evaluates GDPR Chapter III and DPDP Act Chapter IV rights implementation and user control mechanisms',
+      description: 'Evaluates DPDP Act Chapter IV Data Principal rights implementation and user control mechanisms',
       criteria: [
-        'Data access rights (GDPR Art. 15, DPDP Act Sec. 11)',
-        'Rectification processes (GDPR Art. 16, DPDP Act Sec. 12)',
-        'Right to be forgotten/deletion (GDPR Art. 17, DPDP Act Sec. 12)',
-        'Data portability (GDPR Art. 20)',
+        'Data access rights (DPDP Act Sec. 11)',
+        'Correction and updation processes (DPDP Act Sec. 12)',
+        'Right to erasure and data deletion (DPDP Act Sec. 12)',
+        'Data portability mechanisms',
         'Objection and opt-out mechanisms',
         'Withdrawal of consent (DPDP Act Sec. 7)',
-        'Grievance redressal mechanisms (DPDP Act Sec. 32)'
+        'Grievance redressal mechanisms (DPDP Act Sec. 32)',
+        'Nomination facility for deceased users (DPDP Act Sec. 13)'
       ]
     },
     {
       name: 'Security & Risk Management',
       weight: 15,
       icon: <Lock className="h-5 w-5" />,
-      description: 'Technical and organizational measures assessment per GDPR Art. 32 and DPDP Act Sec. 8',
+      description: 'Technical and organizational measures assessment per DPDP Act Sec. 8',
       criteria: [
         'Encryption standards (end-to-end, in-transit, at-rest)',
         'Access controls and multi-factor authentication',
-        'Incident response (72-hour GDPR/DPDP Act requirement)',
+        'Incident response and breach notification',
         'Privacy impact assessments',
         'Data retention and deletion schedules',
-        'Data localization compliance (DPDP Act)'
+        'Data localization compliance for India',
+        'Reasonable security safeguards (DPDP Act Sec. 8)'
       ]
     },
     {
       name: 'Regulatory Compliance',
       weight: 7,
       icon: <FileText className="h-5 w-5" />,
-      description: 'Multi-jurisdictional compliance evaluation across global privacy frameworks',
+      description: 'India DPDP Act 2023 compliance evaluation and Data Protection Board requirements',
       criteria: [
-        'GDPR compliance indicators (EU users)',
-        'CCPA compliance markers (California residents)',
         'DPDP Act 2023 compliance (Indian users)',
-        'Sectoral compliance (HIPAA, FERPA, GLBA)',
-        'Privacy officer/DPO designation',
-        'Data Protection Board registration (DPDP Act Sec. 25)'
+        'Data Principal rights implementation',
+        'Data fiduciary obligations fulfillment',
+        'Consent Manager integration readiness',
+        'Data Protection Board registration (DPDP Act Sec. 25)',
+        'Significant Data Fiduciary classification compliance'
       ]
     },
     {
       name: 'Transparency & Communication',
       weight: 3,
       icon: <Eye className="h-5 w-5" />,
-      description: 'Information quality and accessibility assessment including DPDP Act transparency requirements',
+      description: 'Information quality and accessibility assessment per DPDP Act transparency requirements',
       criteria: [
-        'Plain language usage (Flesch-Kincaid readability)',
+        'Plain language usage and readability',
         'Layered notices and mobile optimization',
         'Proactive change notifications',
-        'Dedicated privacy contact/DPO information',
         'Grievance officer details (DPDP Act requirement)',
-        'Vernacular language support'
+        'Vernacular language support for Indian languages',
+        'Accessibility for persons with disabilities',
+        'Clear data fiduciary identification'
       ]
     }
   ];
@@ -115,7 +120,7 @@ export function MethodologySection() {
             </div>
             <div>
               <h4 className="text-xl font-semibold text-blue-900">Analysis Methodology</h4>
-              <p className="text-sm text-blue-700">Evidence-based privacy assessment framework</p>
+              <p className="text-sm text-blue-700">India DPDP Act 2023 focused privacy assessment framework</p>
             </div>
           </div>
           <Button
@@ -223,13 +228,12 @@ export function MethodologySection() {
               <h5 className="text-lg font-semibold text-blue-900 mb-3">Regulatory Framework</h5>
               <div className="grid md:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <h6 className="font-medium text-blue-800 mb-2">Primary Regulations</h6>
+                  <h6 className="font-medium text-blue-800 mb-2">Primary Regulation</h6>
                   <ul className="space-y-1 text-blue-700">
-                    <li>• GDPR (General Data Protection Regulation)</li>
-                    <li>• CCPA (California Consumer Privacy Act)</li>
                     <li>• DPDP Act 2023 (Digital Personal Data Protection Act, India)</li>
-                    <li>• PIPEDA (Personal Information Protection Act)</li>
-                    <li>• COPPA (Children&apos;s Online Privacy Protection Act)</li>
+                    <li>• IT Act 2000 (Information Technology Act)</li>
+                    <li>• IT Rules 2011 (Reasonable Security Practices)</li>
+                    <li>• Consumer Protection Act 2019</li>
                   </ul>
                 </div>
                 <div>
@@ -237,10 +241,16 @@ export function MethodologySection() {
                   <ul className="space-y-1 text-blue-700">
                     <li>• Privacy-by-Design Principles</li>
                     <li>• ISO/IEC 27001 Security Framework</li>
-                    <li>• NIST Privacy Framework</li>
+                    <li>• CERT-In Guidelines</li>
                     <li>• Fair Information Practice Principles</li>
                   </ul>
                 </div>
+              </div>
+              <div className="mt-4 p-3 bg-amber-50 border-l-4 border-amber-400 rounded">
+                <p className="text-xs text-amber-900">
+                  <strong>Note:</strong> DPDP Act 2023 compliance analysis is indicative based on the current provisions of the Act.
+                  The Act is not yet fully active or enforced. Final rules and implementation guidelines are pending from the Data Protection Board of India.
+                </p>
               </div>
             </div>
           </div>

@@ -28,9 +28,9 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://privacyhub.in'),
-  title: "Privacy Policy Analyser | PrivacyHub.in",
-  description: "Professional privacy policy analyser for everyday users. Understand how the apps and websites you use daily handle your personal data. Get detailed analysis of privacy policies with AI-powered insights.",
-  keywords: "privacy policy analyser, privacy policy analyzer, data privacy, personal data protection, app privacy, digital privacy, privacy education, GDPR compliance, CCPA compliance, DPDP Act compliance, privacy policy checker, data security",
+  title: "Privacy Policy Analyser for India | PrivacyHub.in - DPDP Act 2023 Compliance",
+  description: "India's first DPDP Act 2023 compliance checker. Analyze privacy policies of Indian apps and websites for Digital Personal Data Protection Act compliance. AI-powered privacy analysis for Indian users.",
+  keywords: "privacy policy analyser India, DPDP Act 2023 compliance, data privacy India, personal data protection India, Indian privacy law, digital privacy India, privacy education India, Data Protection Board, Data Fiduciary, Data Principal rights, privacy policy checker India, data security India",
   authors: [{ name: "PrivacyHub.in" }],
   creator: "PrivacyHub.in",
   publisher: "PrivacyHub.in",
@@ -51,17 +51,17 @@ export const metadata: Metadata = {
   manifest: '/site.webmanifest',
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_IN",
     url: "https://privacyhub.in",
     siteName: "PrivacyHub.in",
-    title: "Privacy Policy Analyser | PrivacyHub.in",
-    description: "Professional privacy policy analyser powered by AI. Get detailed analysis of GDPR, CCPA, and DPDP Act compliance for any app or website.",
+    title: "Privacy Policy Analyser for India | DPDP Act 2023 Compliance",
+    description: "India's first DPDP Act 2023 compliance checker. Analyze privacy policies for Digital Personal Data Protection Act compliance. AI-powered privacy analysis for Indian users.",
     images: [
       {
         url: 'https://privacyhub.in/android-chrome-512x512.png',
         width: 512,
         height: 512,
-        alt: 'PrivacyHub - Privacy Policy Analyser',
+        alt: 'PrivacyHub - India Privacy Policy Analyser for DPDP Act 2023',
         type: 'image/png',
       }
     ],
@@ -70,8 +70,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@privacyhubin",
     creator: "@privacyhubin",
-    title: "Privacy Policy Analyser | PrivacyHub.in",
-    description: "Professional privacy policy analyser powered by AI. Get detailed analysis of GDPR, CCPA, and DPDP Act compliance for any app or website.",
+    title: "Privacy Policy Analyser for India | DPDP Act 2023",
+    description: "India's first DPDP Act 2023 compliance checker. Analyze privacy policies for Digital Personal Data Protection Act compliance. AI-powered analysis for Indian users.",
     images: ['https://privacyhub.in/android-chrome-512x512.png'],
   },
   robots: {
