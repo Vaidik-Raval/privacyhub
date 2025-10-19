@@ -5,9 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "worker:build": "opennextjs-cloudflare build",
-    "worker:deploy": "npm run worker:build && wrangler deploy",
+    "build": "next build --turbopack && opennextjs-cloudflare build",
+    "worker:deploy": "npm run build && wrangler deploy",
     "worker:preview": "opennextjs-cloudflare dev",
     "deploy": "npm run worker:deploy",
     "start": "next start",
