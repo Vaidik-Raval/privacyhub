@@ -83,7 +83,7 @@
   
   html {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    scroll-behavior: smooth;
+    scroll-behavior: auto; /* Disable native smooth scrolling for Lenis */
     overflow-x: hidden;
     max-width: 100vw;
   }
@@ -225,3 +225,18 @@
 /* Overflow handling */
 .overflow-hidden { overflow: hidden; }
 .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+
+/* Lenis Smooth Scrolling Styles */
+html {
+  scroll-behavior: auto !important;
+}
+
+/* Optimize performance for Lenis */
+body {
+  overflow-x: hidden;
+}
+
+/* Disable native scroll behavior when using Lenis */
+*, *::before, *::after {
+  scroll-behavior: auto !important;
+}
