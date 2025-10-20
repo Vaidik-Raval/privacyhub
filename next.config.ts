@@ -1,17 +1,9 @@
 import type { NextConfig } from "next";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-// Initialize OpenNext Cloudflare for local development ONLY
-// This enables access to bindings (D1, env vars) in development mode
-// IMPORTANT: Only run in development, not during production builds
-if (process.env.NODE_ENV !== 'production') {
-  initOpenNextCloudflareForDev();
-}
 
 const nextConfig: NextConfig = {
   turbopack: {
